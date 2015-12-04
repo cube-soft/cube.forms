@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,13 +31,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AsyncBridge.Net35">
       <HintPath>..\packages\AsyncBridge.Net35.0.2.0\lib\net35-Client\AsyncBridge.Net35.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Cube.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Cube.Core">
       <HintPath>..\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.14.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -50,6 +52,7 @@
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Threading">
       <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
@@ -61,8 +64,12 @@
     <Compile Include="Button.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Detail\BrowserVersion.cs" />
-    <Compile Include="Detail\FeatureControl.cs">
+    <Compile Include="Detail\MousePoint.cs" />
+    <Compile Include="FlatButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Models\BrowserVersion.cs" />
+    <Compile Include="Models\FeatureControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Detail\FontFactory.cs" />
@@ -74,9 +81,9 @@
     <Compile Include="EventArgs\NavigatingErrorEventArgs.cs" />
     <Compile Include="EventArgs\NavigatingEventArgs.cs" />
     <Compile Include="EventArgs\NotifyEventArgs.cs" />
-    <Compile Include="Detail\ButtonPainter.cs" />
-    <Compile Include="Detail\NotifyPresenter.cs" />
-    <Compile Include="Detail\NotifyStyle.cs" />
+    <Compile Include="Detail\FlatButtonPainter.cs" />
+    <Compile Include="Presenters\NotifyPresenter.cs" />
+    <Compile Include="Models\NotifyStyle.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="Extensions\GraphicsExtensions.cs" />
     <Compile Include="Detail\NullExpandableObjectConverter.cs" />
@@ -89,6 +96,7 @@
     <Compile Include="NtsForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -99,7 +107,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Detail\RadioButtonPainter.cs" />
-    <Compile Include="Detail\Surface.cs" />
+    <Compile Include="Models\Surface.cs" />
     <Compile Include="ToggleButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -107,11 +115,17 @@
     <Compile Include="NtsUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VersionView.cs">
+    <Compile Include="VersionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VersionView.Designer.cs">
-      <DependentUpon>VersionView.cs</DependentUpon>
+    <Compile Include="VersionControl.Designer.cs">
+      <DependentUpon>VersionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VersionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="VersionForm.Designer.cs">
+      <DependentUpon>VersionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="WidgetForm.cs">
       <SubType>Form</SubType>
@@ -128,8 +142,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="VersionView.resx">
-      <DependentUpon>VersionView.cs</DependentUpon>
+    <EmbeddedResource Include="VersionControl.resx">
+      <DependentUpon>VersionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VersionForm.resx">
+      <DependentUpon>VersionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +161,7 @@
   <ItemGroup>
     <None Include="Resources\ButtonClose.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

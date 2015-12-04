@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// Button.cs
+/// Surface.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -19,38 +19,38 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Drawing;
+using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Forms.Button
+    /// Cube.Forms.Surface
     /// 
     /// <summary>
-    /// ボタンを作成するためのクラスです。
+    /// コントロールの外観を定義するためのクラスです。
     /// </summary>
-    /// 
-    /// <remarks>
-    /// Button クラスは、System.Windows.Forms.Button クラスにおける
-    /// いくつかの表示上の問題を解決するために定義されたクラスです。
-    /// さらに柔軟な外観を定義する場合は、FlatButton クラスを利用して下さい。
-    /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public class Button : System.Windows.Forms.Button
+    [TypeConverter(typeof(NullExpandableObjectConverter))]
+    public class Surface
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Button
+        /// Surface
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Button() : base() { }
+        public Surface()
+        {
+            BorderSize = -1;
+        }
 
         #endregion
 
@@ -58,92 +58,78 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ShowFocusCues
+        /// BackColor
         ///
         /// <summary>
-        /// フォーカス時に枠線を表示するかどうかを示す値を取得します。
+        /// コントロールの背景色を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override bool ShowFocusCues
-        {
-            get { return false; }
-        }
-
-        #endregion
-
-        #region Override methods
+        [Browsable(true)]
+        public Color BackColor { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ShowFocusCues
+        /// BackgroundImage
         ///
         /// <summary>
-        /// フォーカス時に枠線を表示するかどうかを示す値を取得します。
+        /// コントロールの背景イメージを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnEnabledChanged(EventArgs e)
-        {
-            try
-            {
-                if (Enabled == _previous) return;
-
-                if (Enabled) SetEnabledColor();
-                else SetDisabledColor();
-                _previous = Enabled;
-            }
-            finally { base.OnEnabledChanged(e); }
-        }
-
-        #endregion
-
-        #region Other private methods
+        [Browsable(true)]
+        public Image BackgroundImage { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SetEnabledColor
+        /// BorderColor
         ///
         /// <summary>
-        /// ボタンが有効状態の時の色を設定します。
+        /// コントロールを囲む境界線の色を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetEnabledColor()
-        {
-            BackColor = _background;
-            ForeColor = _foreground;
-            FlatAppearance.BorderColor = _border;
-        }
+        [Browsable(true)]
+        public Color BorderColor { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// SetDisabledColor
+        /// BorderSize
         ///
         /// <summary>
-        /// ボタンが無効状態の時の色を設定します。
+        /// コントロールを囲む境界線のサイズ (ピクセル単位) を取得または
+        /// 設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void SetDisabledColor()
-        {
-            _background = BackColor;
-            _foreground = ForeColor;
-            _border = FlatAppearance.BorderColor;
+        [Browsable(true)]
+        [DefaultValue(-1)]
+        public int BorderSize { get; set; }
 
-            var control = SystemColors.ButtonFace;
-            BackColor = Color.FromArgb(204, 204, 204);
-            ForeColor = SystemColors.GrayText;
-            FlatAppearance.BorderColor = Color.FromArgb(191, 191, 191);
-        }
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Image
+        ///
+        /// <summary>
+        /// コントロールに表示されるイメージを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(true)]
+        public Image Image { get; set; }
 
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// TextColor
+        ///
+        /// <summary>
+        /// コントロール上に表示されるテキストの色を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(true)]
+        public Color TextColor { get; set; }
 
-        #region Fields
-        private bool _previous = true;
-        private Color _background = Color.Empty;
-        private Color _foreground = Color.Empty;
-        private Color _border = Color.Empty;
         #endregion
     }
 }

@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// Button.cs
+/// VersionForm.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -18,39 +18,51 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
 
 namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Cube.Forms.Button
+    /// Cube.Forms.VersionForm
     /// 
     /// <summary>
-    /// ボタンを作成するためのクラスです。
+    /// バージョン情報を表示するためのフォームクラスです。
     /// </summary>
-    /// 
-    /// <remarks>
-    /// Button クラスは、System.Windows.Forms.Button クラスにおける
-    /// いくつかの表示上の問題を解決するために定義されたクラスです。
-    /// さらに柔軟な外観を定義する場合は、FlatButton クラスを利用して下さい。
-    /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public class Button : System.Windows.Forms.Button
+    public partial class VersionForm : NtsForm
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Button
+        /// VersionForm
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Button() : base() { }
+        public VersionForm() : this(null) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VersionForm
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public VersionForm(Assembly assembly)
+        {
+            InitializeComponent();
+            VersionControl.Assembly = assembly;
+            ExitButton.Click += (s, e) => Close();
+        }
 
         #endregion
 
@@ -58,16 +70,65 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ShowFocusCues
+        /// Assembly
         ///
         /// <summary>
-        /// フォーカス時に枠線を表示するかどうかを示す値を取得します。
+        /// バージョン情報等を保持する Assembly オブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override bool ShowFocusCues
+        public Assembly Assembly
         {
-            get { return false; }
+            get { return VersionControl.Assembly; }
+            set { VersionControl.Assembly = value; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Description
+        ///
+        /// <summary>
+        /// バージョン情報画面で表示する情報を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(true)]
+        public string Description
+        {
+            get { return VersionControl.Description; }
+            set { VersionControl.Description = value; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Logo
+        ///
+        /// <summary>
+        /// ロゴ画像を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(true)]
+        public Image Logo
+        {
+            get { return VersionControl.Logo; }
+            set { VersionControl.Logo = value; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Url
+        ///
+        /// <summary>
+        /// Web ページの URL を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(true)]
+        public string Url
+        {
+            get { return VersionControl.Url; }
+            set { VersionControl.Url = value; }
         }
 
         #endregion
@@ -76,74 +137,21 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ShowFocusCues
+        /// OnLoad
         ///
         /// <summary>
-        /// フォーカス時に枠線を表示するかどうかを示す値を取得します。
+        /// フォームのロード時に実行されるハンドラです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnEnabledChanged(EventArgs e)
+        protected override void OnLoad(EventArgs e)
         {
-            try
-            {
-                if (Enabled == _previous) return;
-
-                if (Enabled) SetEnabledColor();
-                else SetDisabledColor();
-                _previous = Enabled;
-            }
-            finally { base.OnEnabledChanged(e); }
+            var reader = new AssemblyReader(Assembly);
+            Text = string.Format("{0} について", reader.Product);
+            Icon = reader.Icon;
+            base.OnLoad(e);
         }
 
-        #endregion
-
-        #region Other private methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetEnabledColor
-        ///
-        /// <summary>
-        /// ボタンが有効状態の時の色を設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void SetEnabledColor()
-        {
-            BackColor = _background;
-            ForeColor = _foreground;
-            FlatAppearance.BorderColor = _border;
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// SetDisabledColor
-        ///
-        /// <summary>
-        /// ボタンが無効状態の時の色を設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void SetDisabledColor()
-        {
-            _background = BackColor;
-            _foreground = ForeColor;
-            _border = FlatAppearance.BorderColor;
-
-            var control = SystemColors.ButtonFace;
-            BackColor = Color.FromArgb(204, 204, 204);
-            ForeColor = SystemColors.GrayText;
-            FlatAppearance.BorderColor = Color.FromArgb(191, 191, 191);
-        }
-
-        #endregion
-
-        #region Fields
-        private bool _previous = true;
-        private Color _background = Color.Empty;
-        private Color _foreground = Color.Empty;
-        private Color _border = Color.Empty;
         #endregion
     }
 }
