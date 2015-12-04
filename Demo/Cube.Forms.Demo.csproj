@@ -57,9 +57,8 @@
     <ApplicationIcon>app.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Cube.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Cube.Core.dll</HintPath>
+    <Reference Include="Cube.Core">
+      <HintPath>..\..\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -180,7 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cube.Forms.csproj">
-      <Project>{C305E44A-3F6C-4662-A111-0F146A7E2842}</Project>
+      <Project>{c305e44a-3f6c-4662-a111-0f146a7e2842}</Project>
       <Name>Cube.Forms</Name>
     </ProjectReference>
   </ItemGroup>
