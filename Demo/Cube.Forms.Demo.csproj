@@ -155,7 +155,7 @@
       <DependentUpon>DemoWeb.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="App.config" />
-    <None Include="app.manifest" />
+    <None Include="App.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
