@@ -152,7 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <None Include="Packages.config" />
     <None Include="Resources\LogoLarge.png" />
   </ItemGroup>
   <ItemGroup>
