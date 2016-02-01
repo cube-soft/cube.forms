@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// DemoStockIcons.cs
+/// UserControl.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -17,81 +17,56 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
 using System.Drawing;
-using System.Windows.Forms;
+using log4net;
 
-namespace Cube.Forms.Demo
+namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// DemoStockIcons
+    /// UserControl
     /// 
     /// <summary>
-    /// システムアイコン一覧を表示するためのデモ用クラスです。
+    /// System.Windows.Forms.UserControl を拡張したクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public partial class DemoStockIcons : WidgetForm
+    public class UserControl : System.Windows.Forms.UserControl
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// DemoStockIcons
+        /// NtsUserControl
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DemoStockIcons()
+        public UserControl()
+            : base()
         {
-            InitializeComponent();
-
-            CloseButton.Click += (s, e) => Close();
-
-            var converter = new StockIconConverter();
-            converter.ImageList = new ImageList();
-
-            IconListView.Converter = converter;
-            IconListView.LargeImageList = converter.ImageList;
-            IconListView.LargeImageList.ImageSize = new Size(48, 48);
-            IconListView.LargeImageList.ColorDepth = ColorDepth.Depth32Bit;
-            foreach (Cube.StockIcons kind in Enum.GetValues(typeof(Cube.StockIcons)))
-            {
-                var icon = Cube.IconFactory.Create(kind, Cube.IconSize.ExtraLarge);
-                if (icon == null) continue;
-
-                IconListView.LargeImageList.Images.Add(icon.ToBitmap());
-                IconListView.Add(kind);
-            }
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            DoubleBuffered = true;
+            Font = FontFactory.Create(12, Font.Style, GraphicsUnit.Pixel);
+            Logger = LogManager.GetLogger(GetType());
         }
 
         #endregion
 
-        #region Internal classes
+        #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// StockIconConverter
+        /// Logger
         ///
         /// <summary>
-        /// 変換用クラスです。
+        /// ログ出力用オブジェクトを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        internal class StockIconConverter : IListViewItemConverter
-        {
-            public ImageList ImageList { get; set; }
-
-            public ListViewItem Convert<T>(T src)
-            {
-                var text  = string.Format("{0:D}\n{1}", src, src);
-                var index = (ImageList != null) ? ImageList.Images.Count - 1 : 0;
-                return new ListViewItem(text, index);
-            }
-        }
+        protected ILog Logger { get; }
 
         #endregion
     }
