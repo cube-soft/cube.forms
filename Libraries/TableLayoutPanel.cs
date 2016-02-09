@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// UserControl.cs
+/// TableLayoutPanel.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -24,34 +24,25 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UserControl
+    /// TableLayoutPanel
     /// 
     /// <summary>
-    /// System.Windows.Forms.UserControl を拡張したクラスです。
+    /// System.Windows.Forms.TableLayoutPanel を拡張したクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class UserControl : System.Windows.Forms.UserControl
+    public class TableLayoutPanel : System.Windows.Forms.TableLayoutPanel
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// UserControl
+        /// TableLayoutPanel
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public UserControl()
-            : base()
-        {
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            DoubleBuffered = true;
-        }
-
-        #endregion
+        public TableLayoutPanel() : base() { }
 
         #region Events
 

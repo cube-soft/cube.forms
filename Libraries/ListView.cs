@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// Button.cs
+/// ListView.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -19,6 +19,8 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Cube.Forms
 {
@@ -61,6 +63,38 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
+        /// Count
+        ///
+        /// <summary>
+        /// 項目数を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public int Count
+        {
+            get
+            {
+                return VirtualMode ? VirtualListSize : Items.Count;
+
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// AnyItemsSelected
+        ///
+        /// <summary>
+        /// 項目を 1 つ以上選択しているかどうかを示す値を取得します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public bool AnyItemsSelected
+        {
+            get { return SelectedIndices != null && SelectedIndices.Count > 0; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// Converter
         ///
         /// <summary>
@@ -72,7 +106,191 @@ namespace Cube.Forms
 
         #endregion
 
+        #region Events
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Added
+        ///
+        /// <summary>
+        /// 項目を追加する直前に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueCancelEventArgs<int>> Adding;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Added
+        ///
+        /// <summary>
+        /// 項目が追加された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueEventArgs<int>> Added;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Repllacing
+        ///
+        /// <summary>
+        /// 項目が置換される直前に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueCancelEventArgs<int>> Replacing;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Replaced
+        ///
+        /// <summary>
+        /// 項目が置換された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueEventArgs<int>> Replaced;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Removing
+        ///
+        /// <summary>
+        /// 項目が削除される直前に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueCancelEventArgs<int[]>> Removing;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Removed
+        ///
+        /// <summary>
+        /// 項目が削除された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueEventArgs<int[]>> Removed;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Clearing
+        ///
+        /// <summary>
+        /// 全ての項目が削除される直前に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<CancelEventArgs> Clearing;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Cleared
+        ///
+        /// <summary>
+        /// 全ての項目が削除された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler Cleared;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Moving
+        ///
+        /// <summary>
+        /// 項目が移動される直前に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<CancelEventArgs> Moving;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Moved
+        ///
+        /// <summary>
+        /// 項目が移動された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<MoveEventArgs> Moved;
+
+        #endregion
+
         #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Select
+        ///
+        /// <summary>
+        /// 項目を選択します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Select(int index)
+        {
+            if (index < 0 || index >= Count) return;
+            SelectedIndices.Clear();
+            SelectedIndices.Add(index);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Select
+        ///
+        /// <summary>
+        /// 項目を選択します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Select(IEnumerable<int> indices)
+        {
+            SelectedIndices.Clear();
+            foreach (var index in indices)
+            {
+                if (index < 0 || index >= Count) continue;
+                SelectedIndices.Add(index);
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SelectMore
+        ///
+        /// <summary>
+        /// 既に選択されている項目を保持したまま、項目を選択します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void SelectMore(int index)
+        {
+            if (index < 0 || index >= Count) return;
+            if (SelectedIndices.Contains(index)) return;
+            SelectedIndices.Add(index);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// SelectMore
+        ///
+        /// <summary>
+        /// 既に選択されている項目を保持したまま、項目を選択します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void SelectMore(IEnumerable<int> indices)
+        {
+            foreach (var index in indices)
+            {
+                if (index < 0 || index >= Count) return;
+                if (SelectedIndices.Contains(index)) return;
+                SelectedIndices.Add(index);
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -85,12 +303,20 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         public void Add<T>(T item)
         {
+            var index = Count;
+
+            var args = new ValueCancelEventArgs<int>(index);
+            OnAdding(args);
+            if (args.Cancel || VirtualMode) return;
+
             Items.Add(
                 Converter != null ?
                 Converter.Convert(item) :
                 new System.Windows.Forms.ListViewItem(item.ToString())
             );
+
             HackAlignmentBug();
+            OnAdded(new ValueEventArgs<int>(index));
         }
 
         /* ----------------------------------------------------------------- */
@@ -104,12 +330,304 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         public void Insert<T>(int index, T item)
         {
+            var args = new ValueCancelEventArgs<int>(index);
+            OnAdding(args);
+            if (args.Cancel || VirtualMode) return;
+
             Items.Insert(index,
                 Converter != null ?
                 Converter.Convert(item) :
                 new System.Windows.Forms.ListViewItem(item.ToString())
             );
+
             HackAlignmentBug();
+            OnAdded(new ValueEventArgs<int>(index));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Replace
+        ///
+        /// <summary>
+        /// 指定されたインデックスの内容を置換します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Replace<T>(int index, T item)
+        {
+            if (index < 0 || index >= Count) return;
+            var args = new ValueCancelEventArgs<int>(index);
+            OnReplacing(args);
+            if (args.Cancel || VirtualMode) return;
+
+            var focused  = Items[index].Focused;
+            var selected = Items[index].Selected;
+
+            Items[index] = Converter != null ?
+                           Converter.Convert(item) :
+                           new System.Windows.Forms.ListViewItem(item.ToString());
+
+            HackAlignmentBug();
+            Items[index].Focused = focused;
+            Items[index].Selected = selected;
+            OnReplaced(new ValueEventArgs<int>(index));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RemoveItems
+        ///
+        /// <summary>
+        /// 項目を削除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void RemoveItems(IEnumerable<int> indices)
+        {
+            var args = new ValueCancelEventArgs<int[]>(indices.ToArray());
+            OnRemoving(args);
+            if (args.Cancel || VirtualMode) return;
+
+            foreach (var index in indices.OrderByDescending(x => x))
+            {
+                if (index < 0 || index >= Count) continue;
+                Items.RemoveAt(index);
+            }
+
+            OnRemoved(new ValueEventArgs<int[]>(indices.ToArray()));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RemoveItems
+        ///
+        /// <summary>
+        /// 選択されている項目を削除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void RemoveItems()
+        {
+            var indices = new List<int>();
+            foreach (int index in SelectedIndices) indices.Add(index);
+            RemoveItems(indices);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ClearItems
+        ///
+        /// <summary>
+        /// 全ての項目を削除します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void ClearItems()
+        {
+            var args = new CancelEventArgs();
+            OnClearing(args);
+            if (args.Cancel || VirtualMode) return;
+
+            Items.Clear();
+            OnCleared(new EventArgs());
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// MoveItems
+        ///
+        /// <summary>
+        /// 項目を移動します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// offset が正の数の場合は後ろに、負の数の場合は前に移動します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void MoveItems(IEnumerable<int> indices, int offset)
+        {
+            if (offset == 0) return;
+
+            var args = new MoveCancelEventArgs(indices.ToArray(), offset);
+            OnMoving(args);
+            if (args.Cancel || VirtualMode) return;
+
+            var sorted = offset > 0 ?
+                         indices.OrderByDescending(x => x) :
+                         indices.OrderBy(x => x);
+
+            foreach (var index in sorted)
+            {
+                if (index < 0 || index >= Count) continue;
+                var item = Items[index];
+                Items.RemoveAt(index);
+
+                var newindex = Math.Max(Math.Min(index + offset, Count), 0);
+                Items.Insert(newindex, item);
+            }
+
+            OnMoved(new MoveEventArgs(indices.ToArray(), offset));
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// MoveItems
+        ///
+        /// <summary>
+        /// 選択されている項目を移動します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        public void MoveItems(int offset)
+        {
+            var indices = new List<int>();
+            foreach (int index in SelectedIndices) indices.Add(index);
+            MoveItems(indices, offset);
+        }
+
+        #endregion
+
+        #region Virtual methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnAdding
+        ///
+        /// <summary>
+        /// Adding イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnAdding(ValueCancelEventArgs<int> e)
+        {
+            if (Adding != null) Adding(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnAdded
+        ///
+        /// <summary>
+        /// Added イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnAdded(ValueEventArgs<int> e)
+        {
+            if (Added != null) Added(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnReplacing
+        ///
+        /// <summary>
+        /// Replacing イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnReplacing(ValueCancelEventArgs<int> e)
+        {
+            if (Replacing != null) Replacing(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnReplaced
+        ///
+        /// <summary>
+        /// Replaced イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnReplaced(ValueEventArgs<int> e)
+        {
+            if (Replaced != null) Replaced(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnRemoving
+        ///
+        /// <summary>
+        /// Removing イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnRemoving(ValueCancelEventArgs<int[]> e)
+        {
+            if (Removing != null) Removing(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnRemoved
+        ///
+        /// <summary>
+        /// Removed イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnRemoved(ValueEventArgs<int[]> e)
+        {
+            if (Removed != null) Removed(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnClearing
+        ///
+        /// <summary>
+        /// Clearing イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnClearing(CancelEventArgs e)
+        {
+            if (Clearing != null) Clearing(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnCleared
+        ///
+        /// <summary>
+        /// Cleared イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnCleared(EventArgs e)
+        {
+            if (Cleared != null) Cleared(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnMoving
+        ///
+        /// <summary>
+        /// Moving イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnMoving(MoveCancelEventArgs e)
+        {
+            if (Moving != null) Moving(this, e);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnMoved
+        ///
+        /// <summary>
+        /// Moved イベントを発生させます。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnMoved(MoveEventArgs e)
+        {
+            if (Moved != null) Moved(this, e);
         }
 
         #endregion
@@ -144,7 +662,7 @@ namespace Cube.Forms
         {
             base.OnSelectedIndexChanged(e);
             if (Theme == WindowTheme.Normal) return;
-            User32.SendMessage(Handle, 0x127, 0x10001, 0);
+            User32.SendMessage(Handle, 0x127, (IntPtr)0x10001, IntPtr.Zero);
         }
         /* ----------------------------------------------------------------- */
         ///
@@ -159,12 +677,12 @@ namespace Cube.Forms
         {
             base.OnEnter(e);
             if (Theme == WindowTheme.Normal) return;
-            User32.SendMessage(Handle, 0x127, 0x10001, 0);
+            User32.SendMessage(Handle, 0x127, (IntPtr)0x10001, IntPtr.Zero);
         }
 
         #endregion
 
-        #region Other private methods
+        #region Others
 
         /* ----------------------------------------------------------------- */
         ///
@@ -199,6 +717,52 @@ namespace Cube.Forms
             var alignment = Alignment;
             Alignment = System.Windows.Forms.ListViewAlignment.Default;
             Alignment = alignment;
+        }
+
+        #endregion
+
+        #region Classes
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// MoveEventArgs
+        ///
+        /// <summary>
+        /// Move イベントのデータを保持するクラスです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public class MoveEventArgs : EventArgs
+        {
+            public MoveEventArgs(int[] indices, int offset) : base()
+            {
+                Indices = indices;
+                Offset  = offset;
+            }
+
+            public int[] Indices { get; }
+            public int Offset { get; }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// MoveCancelEventArgs
+        ///
+        /// <summary>
+        /// Move イベントのデータを保持するクラスです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public class MoveCancelEventArgs : CancelEventArgs
+        {
+            public MoveCancelEventArgs(int[] indices, int offset) : base(false)
+            {
+                Indices = indices;
+                Offset = offset;
+            }
+
+            public int[] Indices { get; }
+            public int Offset { get; }
         }
 
         #endregion

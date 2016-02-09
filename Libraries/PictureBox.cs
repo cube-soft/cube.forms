@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// UserControl.cs
+/// PictureBox.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -24,34 +24,25 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UserControl
+    /// PictureBox
     /// 
     /// <summary>
-    /// System.Windows.Forms.UserControl を拡張したクラスです。
+    /// System.Windows.Forms.PictureBox を拡張したクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class UserControl : System.Windows.Forms.UserControl
+    public class PictureBox : System.Windows.Forms.PictureBox
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// UserControl
+        /// PictureBox
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public UserControl()
-            : base()
-        {
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            DoubleBuffered = true;
-        }
-
-        #endregion
+        public PictureBox() : base() { }
 
         #region Events
 

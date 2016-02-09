@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// UserControl.cs
+/// Panel.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -24,34 +24,25 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UserControl
+    /// Panel
     /// 
     /// <summary>
-    /// System.Windows.Forms.UserControl を拡張したクラスです。
+    /// System.Windows.Forms.Panel を拡張したクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class UserControl : System.Windows.Forms.UserControl
+    public class Panel : System.Windows.Forms.Panel
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// UserControl
+        /// Panel
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public UserControl()
-            : base()
-        {
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            DoubleBuffered = true;
-        }
-
-        #endregion
+        public Panel() : base() { }
 
         #region Events
 
