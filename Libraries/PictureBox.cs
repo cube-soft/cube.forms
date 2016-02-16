@@ -33,6 +33,8 @@ namespace Cube.Forms
     /* --------------------------------------------------------------------- */
     public class PictureBox : System.Windows.Forms.PictureBox
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
         /// PictureBox
@@ -43,6 +45,8 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         public PictureBox() : base() { }
+
+        #endregion
 
         #region Events
 
@@ -71,9 +75,7 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         protected virtual void OnNcHitTest(QueryEventArgs<Point, Position> e)
-        {
-            if (NcHitTest != null) NcHitTest(this, e);
-        }
+            => NcHitTest?.Invoke(this, e);
 
         #endregion
 
