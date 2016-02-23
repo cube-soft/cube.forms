@@ -64,8 +64,14 @@
     <Compile Include="Button.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ColorButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Detail\FontFactory.cs" />
     <Compile Include="FlowLayoutPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FontButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Models\Position.cs" />
@@ -124,8 +130,8 @@
     </Compile>
     <Compile Include="Detail\RadioButtonPainter.cs" />
     <Compile Include="Models\Surface.cs" />
-    <Compile Include="SettingsForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="SettingsControl.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="SizeGripControl.cs">
       <SubType>Component</SubType>
