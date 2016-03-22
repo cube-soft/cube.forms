@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using log4net;
+using Cube.Log;
 
 namespace Cube.Forms
 {
@@ -49,8 +49,6 @@ namespace Cube.Forms
         /* --------------------------------------------------------------------- */
         public NotifyForm()
         {
-            Logger = LogManager.GetLogger(GetType());
-
             InitializeComponent();
             InitializeStyles();
             SetTopMost();
@@ -181,6 +179,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
+        [Browsable(false)]
         public bool IsBusy { get; private set; }
 
         /* --------------------------------------------------------------------- */
@@ -197,19 +196,10 @@ namespace Cube.Forms
         /// </remarks>
         ///
         /* --------------------------------------------------------------------- */
-        public IDictionary<NotifyLevel, NotifyStyle> Styles
-            => new Dictionary<NotifyLevel, NotifyStyle>();
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Logger
-        /// 
-        /// <summary>
-        /// ログ出力用オブジェクトを取得します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        protected ILog Logger { get; }
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IDictionary<NotifyLevel, NotifyStyle> Styles { get; }
+            = new Dictionary<NotifyLevel, NotifyStyle>();
 
         /* --------------------------------------------------------------------- */
         ///
@@ -437,6 +427,16 @@ namespace Cube.Forms
                 DescriptionColor = System.Drawing.SystemColors.ControlText
             });
 
+            Styles.Add(NotifyLevel.Debug, new NotifyStyle
+            {
+                BackColor        = DefaultStyle.BackColor,
+                BorderColor      = DefaultStyle.BorderColor,
+                Title            = Font,
+                TitleColor       = System.Drawing.SystemColors.ControlText,
+                Description      = Font,
+                DescriptionColor = System.Drawing.SystemColors.ControlText
+            });
+
             Styles.Add(NotifyLevel.Information, new NotifyStyle
             {
                 BackColor        = DefaultStyle.BackColor,
@@ -445,16 +445,6 @@ namespace Cube.Forms
                 TitleColor       = DefaultStyle.TitleColor,
                 Description      = DefaultStyle.Description,
                 DescriptionColor = DefaultStyle.DescriptionColor
-            });
-
-            Styles.Add(NotifyLevel.Recommended, new NotifyStyle
-            {
-                BackColor        = DefaultStyle.BackColor,
-                BorderColor      = DefaultStyle.BorderColor,
-                Title            = DefaultStyle.Title,
-                TitleColor       = DefaultStyle.TitleColor,
-                Description      = DefaultStyle.Description,
-                DescriptionColor = System.Drawing.Color.FromArgb(192, 0, 0)
             });
 
             Styles.Add(NotifyLevel.Important, new NotifyStyle
@@ -514,7 +504,7 @@ namespace Cube.Forms
             }
             catch (TaskCanceledException /* err */) { /* ignore user's cancel */ }
             catch (OperationCanceledException /* err */) { /* ignore user's cancel */ }
-            catch (Exception err) { Logger.Error(err); }
+            catch (Exception err) { this.LogError(err.Message, err); }
             finally { Hidden -= m; }
         }
 
@@ -530,7 +520,7 @@ namespace Cube.Forms
         private void SetLocation()
         {
             var screen = System.Windows.Forms.Screen.GetWorkingArea(this);
-            SetDesktopLocation(screen.Width - Width - 10, screen.Height - Height - 10);
+            SetDesktopLocation(screen.Width - Width - 2, screen.Height - Height - 2);
         }
 
         /* --------------------------------------------------------------------- */
@@ -619,9 +609,7 @@ namespace Cube.Forms
         ///
         /* --------------------------------------------------------------------- */
         private void RaiseTextClickEvent()
-        {
-            OnTextClick(new NotifyEventArgs(Level, Title, Description, Image, Tag));
-        }
+            => OnTextClick(new NotifyEventArgs(Level, Title, Description, Image, Tag));
 
         /* --------------------------------------------------------------------- */
         ///
@@ -633,9 +621,7 @@ namespace Cube.Forms
         ///
         /* --------------------------------------------------------------------- */
         private void RaiseImageClickEvent()
-        {
-            OnImageClick(new NotifyEventArgs(Level, Title, Description, Image, Tag));
-        }
+            => OnImageClick(new NotifyEventArgs(Level, Title, Description, Image, Tag));
 
         #endregion
     }
