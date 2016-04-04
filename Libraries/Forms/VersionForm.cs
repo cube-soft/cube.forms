@@ -46,7 +46,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public VersionForm() : this(null) { }
+        public VersionForm() : this(Assembly.GetExecutingAssembly()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -67,6 +67,21 @@ namespace Cube.Forms
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Version
+        ///
+        /// <summary>
+        /// バージョン情報を取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(false)]
+        public SoftwareVersion Version
+        {
+            get { return VersionControl.Version; }
+        }
 
         /* ----------------------------------------------------------------- */
         ///

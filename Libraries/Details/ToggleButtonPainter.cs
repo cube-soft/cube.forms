@@ -1,6 +1,6 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// RadioButtonPainter.cs
+/// ToggleButtonPainter.cs
 /// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
@@ -23,30 +23,31 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// RadioButtonPainter
+    /// ToggleButtonPainter
     /// 
     /// <summary>
-    /// ラジオボタンの外観を描画するためのクラスです。
+    /// トグルボタンの外観を描画するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class RadioButtonPainter : FlatButtonPainter
+    internal class ToggleButtonPainter : FlatButtonPainter
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// RadioButtonPainter
+        /// ToggleButtonPainter
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public RadioButtonPainter(System.Windows.Forms.RadioButton view)
+        public ToggleButtonPainter(System.Windows.Forms.CheckBox view)
             : base(view)
         {
             view.CheckedChanged += (s, e) => OnCheckedChanged(e);
+            InitializeSurface();
         }
 
         #endregion
@@ -65,31 +66,29 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         protected virtual void OnCheckedChanged(EventArgs e)
         {
-            var control = View as System.Windows.Forms.RadioButton;
+            var control = View as System.Windows.Forms.CheckBox;
             if (control == null) return;
             IsChecked = control.Checked;
-            control.Invalidate();
         }
 
         #endregion
 
-        #region Override methods
+        #region Others
 
         /* ----------------------------------------------------------------- */
         ///
-        /// InvalidateViewSurface
+        /// InitializeSurface
         /// 
         /// <summary>
-        /// 外観の描画に関して RadioButton オブジェクトと競合するプロパティを
+        /// 外観の描画に関して CheckBox オブジェクトと競合するプロパティを
         /// 無効にします。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void InvalidateViewSurface()
+        private void InitializeSurface()
         {
-            var radio = View as System.Windows.Forms.RadioButton;
+            var radio = View as System.Windows.Forms.CheckBox;
             if (radio != null) radio.Appearance = System.Windows.Forms.Appearance.Button;
-            base.InvalidateViewSurface();
         }
 
         #endregion
