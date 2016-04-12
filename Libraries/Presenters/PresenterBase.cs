@@ -110,21 +110,6 @@ namespace Cube.Forms
 
         #region Methods
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dispose
-        /// 
-        /// <summary>
-        /// オブジェクトを破棄する際に必要な終了処理を実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         /* --------------------------------------------------------------------- */
         ///
         /// Async
@@ -135,6 +120,17 @@ namespace Cube.Forms
         ///
         /* --------------------------------------------------------------------- */
         public Task Async(Action action) => Task35.Run(() => action());
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Async
+        /// 
+        /// <summary>
+        /// 各種操作を非同期で実行します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public Task<TResult> Async<TResult>(Func<TResult> func) => Task35.Run(() => func());
 
         /* --------------------------------------------------------------------- */
         ///
@@ -161,9 +157,27 @@ namespace Cube.Forms
         public void SyncWait(Action action)
             => this.LogException(() => SynchronizationContext.Send(_ => action(), null));
 
+        /* --------------------------------------------------------------------- */
+        ///
+        /// SyncWait
+        /// 
+        /// <summary>
+        /// オブジェクト初期化時のスレッド上で各種操作を実行し、
+        /// 実行が完了するまで待機します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public TResult SyncWait<TResult>(Func<TResult> func)
+        {
+            TResult result = default(TResult);
+            try { SynchronizationContext.Send(_ => { result = func(); }, null); }
+            catch (Exception err) { this.LogError(err.Message, err); }
+            return result;
+        }
+
         #endregion
 
-        #region Virtual methods
+        #region Methods for IDisposable
 
         /* ----------------------------------------------------------------- */
         ///
@@ -174,16 +188,23 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (_disposed) return;
-            _disposed = true;
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        #endregion
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dispose
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄する際に必要な終了処理を実行します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void Dispose(bool disposing) { }
 
-        #region Fields
-        private bool _disposed = false;
         #endregion
     }
 }
