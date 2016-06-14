@@ -57,6 +57,7 @@ namespace Cube.Forms
             : base()
         {
             SystemEvents.DisplaySettingsChanged += (s, e) => UpdateMaximumSize();
+            SystemEvents.UserPreferenceChanged  += (s, e) => UpdateMaximumSize();
         }
 
         #endregion
@@ -412,13 +413,14 @@ namespace Cube.Forms
         {
             if (MaximumSize.Width <= 0 || MaximumSize.Height <= 0) return false;
 
+            var area = System.Windows.Forms.Screen.FromControl(this).WorkingArea;
             var info = (MINMAXINFO)Marshal.PtrToStructure(m.LParam, typeof(MINMAXINFO));
-            info.ptMaxPosition.x  = 1;
-            info.ptMaxPosition.y  = 1;
-            info.ptMaxSize.x      = MaximumSize.Width;
-            info.ptMaxSize.y      = MaximumSize.Height;
-            info.ptMaxTrackSize.x = MaximumSize.Width;
-            info.ptMaxTrackSize.y = MaximumSize.Height;
+            info.ptMaxPosition.x  = area.X;
+            info.ptMaxPosition.y  = area.Y;
+            info.ptMaxSize.x      = area.Width;
+            info.ptMaxSize.y      = area.Height;
+            info.ptMaxTrackSize.x = area.Width;
+            info.ptMaxTrackSize.y = area.Height - 1;
             info.ptMinTrackSize.x = MinimumSize.Width;
             info.ptMinTrackSize.y = MinimumSize.Height;
             Marshal.StructureToPtr(info, m.LParam, true);
