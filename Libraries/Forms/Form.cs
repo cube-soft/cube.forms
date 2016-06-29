@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using Cube.Log;
 
 namespace Cube.Forms
 {
@@ -47,14 +48,42 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         public Form() : base()
         {
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             DoubleBuffered = true;
-            Font = FontFactory.Create(12, Font.Style, GraphicsUnit.Pixel);
+            Font = FontFactory.Create(Font);
+            using (var gs = CreateGraphics())
+            {
+                Dpi = gs.DpiX;
+                if (gs.DpiX != gs.DpiY) this.LogWarn($"DpiX:{gs.DpiX}\tDpiY:{gs.DpiY}");
+            }
         }
 
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Bootstrap
+        /// 
+        /// <summary>
+        /// プロセス間通信を介した起動およびアクティブ化を制御するための
+        /// オブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public double Dpi
+        {
+            get { return _dpi; }
+            private set
+            {
+                if (_dpi == value) return;
+                _dpi = value;
+                OnDpiChanged(ValueEventArgs.Create(value));
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -135,6 +164,17 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
+        /// DpiChanged
+        ///
+        /// <summary>
+        /// DPI の値が変化した時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler<ValueEventArgs<double>> DpiChanged;
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// NcHitTest
         ///
         /// <summary>
@@ -198,6 +238,18 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
+        /// OnDpiChanged
+        ///
+        /// <summary>
+        /// DpiChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnDpiChanged(ValueEventArgs<double> e)
+            => DpiChanged?.Invoke(this, e);
+
+        /* ----------------------------------------------------------------- */
+        ///
         /// OnNcHitTest
         ///
         /// <summary>
@@ -249,6 +301,9 @@ namespace Cube.Forms
 
             switch (m.Msg)
             {
+                case 0x02e0: // WM_DPICHANGED                    
+                    Dpi = (short)(m.WParam.ToInt32() & 0x0000ffff);
+                    break;
                 case 0x0084: // WM_NCHITTEST
                     var e = new QueryEventArgs<Point, Position>(CreatePoint(m.LParam));
                     OnNcHitTest(e);
@@ -343,6 +398,7 @@ namespace Cube.Forms
         #endregion
 
         #region Fields
+        private double _dpi = 0.0;
         private Bootstrap _bootstrap = null;
         #endregion
     }
