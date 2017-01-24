@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using Control = System.Windows.Forms.Control;
 
 namespace Cube.Forms
@@ -161,20 +162,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IEnumerable<Control> MonitoredControls => MonitoredControlList;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// MonitoredControlList
-        ///
-        /// <summary>
-        /// 監視されているコントロールの一覧を取得します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        protected IList<Control> MonitoredControlList { get; } = new List<Control>();
+        public IEnumerable<Control> MonitoredControls => _monitor;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -203,6 +191,25 @@ namespace Cube.Forms
         [Browsable(true)]
         [DefaultValue(true)]
         public bool UseCustomColors { get; set; } = true;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// GetName
+        ///
+        /// <summary>
+        /// Control オブジェクトから対応する Model の名前を返す関数を
+        /// 取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Func<Control, string, string> GetName { get; set; } = (control, prefix) =>
+        {
+            var dest = control.Name.Replace(control.GetType().Name, string.Empty);
+            if (string.IsNullOrEmpty(dest) || string.IsNullOrEmpty(prefix)) return dest;
+            return dest.Contains(prefix) ? dest.Replace(prefix, string.Empty) : string.Empty;
+        };
 
         #endregion
 
@@ -272,16 +279,20 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(object properties)
+        public void Update<T>(T model) => Update(model, string.Empty);
+        public void Update<T>(T model, string prefix)
         {
-            var type = properties.GetType();
+            var type = model.GetType();
+            var list = string.IsNullOrEmpty(prefix) ?
+                       MonitoredControls :
+                       MonitoredControls.Where(x => x.Name.Contains(prefix));
 
-            foreach (var control in MonitoredControlList)
+            foreach (var control in list)
             {
-                var name = control.Name.Replace(control.GetType().Name, string.Empty);
+                var name = GetName?.Invoke(control, prefix);
                 if (string.IsNullOrEmpty(name)) continue;
 
-                var value = type.GetProperty(name)?.GetValue(properties, null);
+                var value = type.GetProperty(name)?.GetValue(model, null);
                 if (value == null) continue;
 
                 RaiseUpdateControl(control, value);
@@ -528,10 +539,10 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         protected void RaisePropertyChanged(Control control, object value)
         {
-            var name = control.Name.Replace(control.GetType().Name, string.Empty);
+            var name = GetName?.Invoke(control, string.Empty);
             if (string.IsNullOrEmpty(name)) return;
 
-            OnPropertyChanged(new KeyValueEventArgs<string, object>(name, value));
+            OnPropertyChanged(KeyValueEventArgs.Create(name, value));
             if (ApplyButton != null) ApplyButton.Enabled = true;
         }
 
@@ -545,7 +556,7 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         protected void RaiseUpdateControl(Control control, object value)
-            => OnUpdateControl(new KeyValueCancelEventArgs<Control, object>(control, value));
+            => OnUpdateControl(KeyValueEventArgs.Create(control, value, false));
 
         #endregion
 
@@ -676,7 +687,7 @@ namespace Cube.Forms
 
         #endregion
 
-        #region UpdateXxx methods
+        #region Update control methods
 
         /* ----------------------------------------------------------------- */
         ///
@@ -786,7 +797,7 @@ namespace Cube.Forms
 
         #endregion
 
-        #region Others
+        #region Attach and detach methods
 
         /* ----------------------------------------------------------------- */
         ///
@@ -844,10 +855,10 @@ namespace Cube.Forms
                     text.TextChanged += TextBoxChanged;
                     break;
                 default:
-                    break;
+                    return;
             }
 
-            MonitoredControlList.Add(control);
+            _monitor.Add(control);
         }
 
         /* ----------------------------------------------------------------- */
@@ -862,7 +873,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         private void Detach(Control control)
         {
-            MonitoredControlList.Remove(control);
+            _monitor.Remove(control);
 
             control.ControlAdded   -= Control_ControlAdded;
             control.ControlRemoved -= Control_ControlRemoved;
@@ -909,6 +920,7 @@ namespace Cube.Forms
         private Control _ok     = null;
         private Control _cancel = null;
         private Control _apply  = null;
+        private IList<Control> _monitor = new List<Control>();
         #endregion
     }
 }
