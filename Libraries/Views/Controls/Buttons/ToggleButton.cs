@@ -1,7 +1,5 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// ToggleButton.cs
-/// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
 /// Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +41,11 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ToggleButton() : base() { _painter = new ToggleButtonPainter(this); }
+        public ToggleButton() : base()
+        {
+            _painter = new ToggleButtonPainter(this);
+            _painter.Styles.PropertyChanged += (s, e) => Invalidate();
+        }
 
         #endregion
 
@@ -75,7 +77,12 @@ namespace Cube.Forms
         public string Content
         {
             get { return _painter.Content; }
-            set { _painter.Content = value; }
+            set
+            {
+                if (_painter.Content == value) return;
+                _painter.Content = value;
+                Invalidate();
+            }
         }
 
         /* ----------------------------------------------------------------- */

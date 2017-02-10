@@ -1,7 +1,5 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// FlatButtonPainter.cs
-/// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
 /// Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,11 +55,6 @@ namespace Cube.Forms
             View.MouseUp    += (s, e) => OnMouseUp(e);
 
             InitializeSurface();
-
-            Styles.Normal.BackColor    = SystemColors.Control;
-            Styles.Normal.BorderColor  = SystemColors.ControlDarkDark;
-            Styles.Normal.BorderSize   = 1;
-            Styles.Normal.ContentColor = SystemColors.WindowText;
         }
 
         #endregion
@@ -302,10 +295,10 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         private Color GetBorderColor() => Select(
-            Styles.Normal.BorderColor,
-            Styles.Checked.BorderColor,
-            Styles.MouseOver.BorderColor,
-            Styles.MouseDown.BorderColor
+            Styles.NormalStyle.BorderColor,
+            Styles.CheckedStyle.BorderColor,
+            Styles.MouseOverStyle.BorderColor,
+            Styles.MouseDownStyle.BorderColor
         );
 
         /* ----------------------------------------------------------------- */
@@ -318,10 +311,10 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         private int GetBorderSize() => Select(
-            Styles.Normal.BorderSize,
-            Styles.Checked.BorderSize,
-            Styles.MouseOver.BorderSize,
-            Styles.MouseDown.BorderSize,
+            Styles.NormalStyle.BorderSize,
+            Styles.CheckedStyle.BorderSize,
+            Styles.MouseOverStyle.BorderSize,
+            Styles.MouseDownStyle.BorderSize,
             -1
         );
 
@@ -335,10 +328,10 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         private Color GetBackColor() => Select(
-            Styles.Normal.BackColor,
-            Styles.Checked.BackColor,
-            Styles.MouseOver.BackColor,
-            Styles.MouseDown.BackColor
+            Styles.NormalStyle.BackColor,
+            Styles.CheckedStyle.BackColor,
+            Styles.MouseOverStyle.BackColor,
+            Styles.MouseDownStyle.BackColor
         );
 
         /* ----------------------------------------------------------------- */
@@ -351,10 +344,10 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         private Color GetContentColor() => Select(
-            Styles.Normal.ContentColor,
-            Styles.Checked.ContentColor,
-            Styles.MouseOver.ContentColor,
-            Styles.MouseDown.ContentColor
+            Styles.NormalStyle.ContentColor,
+            Styles.CheckedStyle.ContentColor,
+            Styles.MouseOverStyle.ContentColor,
+            Styles.MouseDownStyle.ContentColor
         );
 
         /* ----------------------------------------------------------------- */
@@ -367,10 +360,10 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         private Image GetImage() => Select(
-            Styles.Normal.Image,
-            Styles.Checked.Image,
-            Styles.MouseOver.Image,
-            Styles.MouseDown.Image
+            Styles.NormalStyle.Image,
+            Styles.CheckedStyle.Image,
+            Styles.MouseOverStyle.Image,
+            Styles.MouseDownStyle.Image
         );
 
         /* ----------------------------------------------------------------- */
@@ -383,10 +376,10 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         private Image GetBackgroundImage() => Select(
-            Styles.Normal.BackgroundImage,
-            Styles.Checked.BackgroundImage,
-            Styles.MouseOver.BackgroundImage,
-            Styles.MouseDown.BackgroundImage
+            Styles.NormalStyle.BackgroundImage,
+            Styles.CheckedStyle.BackgroundImage,
+            Styles.MouseOverStyle.BackgroundImage,
+            Styles.MouseDownStyle.BackgroundImage
         );
 
         /* ----------------------------------------------------------------- */

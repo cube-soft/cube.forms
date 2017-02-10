@@ -15,89 +15,82 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Drawing;
-using System.Windows.Forms;
+using System.Collections.ObjectModel;
 
-namespace Cube.Forms.Demo
+namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MainForm
+    /// NotifyQueue
     /// 
     /// <summary>
-    /// メイン画面を表すクラスです。
+    /// NotifyItem をキュー管理するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public partial class MainForm : WidgetForm
+    public class NotifyQueue : ObservableCollection<NotifyItem>
     {
-        #region Constructors
+        #region Constructor
 
         /* --------------------------------------------------------------------- */
         ///
-        /// MainForm
+        /// NotifyQueue
         /// 
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public MainForm()
-        {
-            InitializeComponent();
-
-            ContentsControl.Resize += ContentsControl_Resize;
-
-            Caption = HeaderCaptionControl;
-        }
+        public NotifyQueue() : base() { }
 
         #endregion
 
-        #region Override methods
+        #region Methods
 
         /* --------------------------------------------------------------------- */
         ///
-        /// OnLoad
+        /// Enqueue
         /// 
         /// <summary>
-        /// ロード時に実行されます。
+        /// オブジェクトを末尾に追加します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        protected override void OnLoad(EventArgs e)
+        public void Enqueue(NotifyItem item)
         {
-            base.OnLoad(e);
-
-            var area = Screen.FromControl(this).WorkingArea;
-            var x = (int)(area.Left + area.Width * 0.1);
-            var y = (int)(area.Top + area.Height * 0.1);
-            Location = new Point(x, y);
+            Add(item);
         }
 
-        #endregion
-
-        #region Event handlers
-
         /* --------------------------------------------------------------------- */
         ///
-        /// ContentsControl_Resize
+        /// Dequeue
         /// 
         /// <summary>
-        /// リサイズ時に実行されるハンドラです。
+        /// 先頭のオブジェクトを削除して取得します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        private void ContentsControl_Resize(object sender, EventArgs e)
+        public NotifyItem Dequeue()
         {
-            var control = sender as Control;
-            if (control == null) return;
+            if (Count <= 0) return null;
+            var dest = base[0];
+            RemoveAt(0);
+            return dest;
+        }
 
-            var width = control.ClientSize.Width;
-            var left  = control.Padding.Left;
-            var right = control.Padding.Right;
-
-            DemoButton1.Width = width - left - right;
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Peek
+        /// 
+        /// <summary>
+        /// 先頭のオブジェクトを削除せずに取得します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public NotifyItem Peek()
+        {
+            if (Count <= 0) return null;
+            return base[0];
         }
 
         #endregion

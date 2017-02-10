@@ -1,7 +1,5 @@
 ﻿/* ------------------------------------------------------------------------- */
 ///
-/// ButtonStyle.cs
-/// 
 /// Copyright (c) 2010 CubeSoft, Inc.
 /// 
 /// Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,9 +29,11 @@ namespace Cube.Forms
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TypeConverter(typeof(NullExpandableObjectConverter))]
-    public class ButtonStyle
+    [TypeConverter(typeof(OnlyExpandableConverter))]
+    public class ButtonStyle : ObservableProperty
     {
+        #region Properties
+
         /* ----------------------------------------------------------------- */
         ///
         /// BackColor
@@ -44,7 +44,12 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        public Color BackColor { get; set; }
+        [DefaultValue(typeof(Color), "Control")]
+        public Color BackColor
+        {
+            get { return _backColor; }
+            set { SetProperty(ref _backColor, value); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -56,7 +61,12 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        public Image BackgroundImage { get; set; }
+        [DefaultValue(null)]
+        public Image BackgroundImage
+        {
+            get { return _backgroundImage; }
+            set { SetProperty(ref _backgroundImage, value); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -68,7 +78,12 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        public Color BorderColor { get; set; }
+        [DefaultValue(typeof(Color), "ActiveBorder")]
+        public Color BorderColor
+        {
+            get { return _borderColor; }
+            set { SetProperty(ref _borderColor, value); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -81,8 +96,12 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        [DefaultValue(-1)]
-        public int BorderSize { get; set; } = -1;
+        [DefaultValue(0)]
+        public int BorderSize
+        {
+            get { return _borderSize; }
+            set { SetProperty(ref _borderSize, value); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -94,7 +113,12 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        public Image Image { get; set; }
+        [DefaultValue(null)]
+        public Image Image
+        {
+            get { return _image; }
+            set { SetProperty(ref _image, value); }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -106,7 +130,23 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        public Color ContentColor { get; set; }
+        [DefaultValue(typeof(Color), "ControlText")]
+        public Color ContentColor
+        {
+            get { return _contentColor; }
+            set { SetProperty(ref _contentColor, value); }
+        }
+
+        #endregion
+
+        #region Fields
+        private Color _backColor = SystemColors.Control;
+        private Color _borderColor = SystemColors.ActiveBorder;
+        private Color _contentColor = SystemColors.ControlText;
+        private Image _backgroundImage = null;
+        private Image _image = null;
+        private int _borderSize = 0;
+        #endregion
     }
 
     /* --------------------------------------------------------------------- */
@@ -118,67 +158,136 @@ namespace Cube.Forms
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [TypeConverter(typeof(NullExpandableObjectConverter))]
-    public class ButtonStyleContainer
+    [TypeConverter(typeof(OnlyExpandableConverter))]
+    public class ButtonStyleContainer : INotifyPropertyChanged
     {
+        #region Constructors
+
         /* ----------------------------------------------------------------- */
         ///
-        /// Normal
+        /// ButtonStyleContainer
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ButtonStyleContainer()
+        {
+            NormalStyle.PropertyChanged    += (s, e) => OnPropertyChanged(nameof(NormalStyle));
+            CheckedStyle.PropertyChanged   += (s, e) => OnPropertyChanged(nameof(CheckedStyle));
+            DisabledStyle.PropertyChanged  += (s, e) => OnPropertyChanged(nameof(DisabledStyle));
+            MouseOverStyle.PropertyChanged += (s, e) => OnPropertyChanged(nameof(MouseOverStyle));
+            MouseDownStyle.PropertyChanged += (s, e) => OnPropertyChanged(nameof(MouseDownStyle));
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// NormalStyle
         ///
         /// <summary>
         /// 通常時の外観を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TypeConverter(typeof(NullExpandableObjectConverter))]
-        public ButtonStyle Normal { get; set; } = new ButtonStyle();
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public ButtonStyle NormalStyle { get; } = new ButtonStyle();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Checked
+        /// CheckedStyle
         ///
         /// <summary>
         /// チェック時の外観を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TypeConverter(typeof(NullExpandableObjectConverter))]
-        public ButtonStyle Checked { get; set; } = new ButtonStyle();
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public ButtonStyle CheckedStyle { get; } = new ButtonStyle();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Disabled
+        /// DisabledStyle
         ///
         /// <summary>
         /// 無効時の外観を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TypeConverter(typeof(NullExpandableObjectConverter))]
-        public ButtonStyle Disabled { get; set; } = new ButtonStyle();
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public ButtonStyle DisabledStyle { get; } = new ButtonStyle();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MouseOver
+        /// MouseOverStyle
         ///
         /// <summary>
         /// マウスオーバ時の外観を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TypeConverter(typeof(NullExpandableObjectConverter))]
-        public ButtonStyle MouseOver { get; set; } = new ButtonStyle();
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public ButtonStyle MouseOverStyle { get; } = new ButtonStyle();
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MouseDown
+        /// MouseDownStyle
         ///
         /// <summary>
         /// マウス押下時の外観を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [TypeConverter(typeof(NullExpandableObjectConverter))]
-        public ButtonStyle MouseDown { get; set; } = new ButtonStyle();
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public ButtonStyle MouseDownStyle { get; } = new ButtonStyle();
+
+        #endregion
+
+        #region Events
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// PropertyChanged
+        /// 
+        /// <summary>
+        /// プロパティが変更された時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
+        #region Virtual methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnPropertyChanged
+        /// 
+        /// <summary>
+        /// PropertyChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+            => PropertyChanged?.Invoke(this, e);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnPropertyChanged
+        /// 
+        /// <summary>
+        /// PropertyChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnPropertyChanged(string name)
+            => OnPropertyChanged(new PropertyChangedEventArgs(name));
+
+        #endregion
     }
 }
