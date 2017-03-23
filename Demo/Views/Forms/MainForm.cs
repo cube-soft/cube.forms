@@ -30,7 +30,7 @@ namespace Cube.Forms.Demo
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public partial class MainForm : WidgetForm
+    public partial class MainForm : BorderlessForm
     {
         #region Constructors
 
@@ -48,6 +48,7 @@ namespace Cube.Forms.Demo
             InitializeComponent();
 
             ContentsControl.Resize += ContentsControl_Resize;
+            DemoButton1.Click += (s, e) => new VersionForm().ShowDialog();
 
             Caption = HeaderCaptionControl;
         }

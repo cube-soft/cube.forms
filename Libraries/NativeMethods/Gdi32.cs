@@ -15,24 +15,38 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-namespace Cube.Forms
+using System;
+using System.Runtime.InteropServices;
+
+namespace Cube.Forms.Gdi32
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// BrowserVersion
+    /// Gdi32.NativeMethods
     /// 
     /// <summary>
-    /// ブラウザのバージョンを定義した列挙型です。
+    /// user32.dll に定義された関数を宣言するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public enum BrowserVersion : int
+    internal static class NativeMethods
     {
-        IE7     =  7000,
-        IE8     =  8000,
-        IE9     =  9000,
-        IE10    = 10000,
-        IE11    = 11000,
-        Latest  =    -1
+        /* ----------------------------------------------------------------- */
+        ///
+        /// CreateRoundRectRgn
+        ///
+        /// <summary>
+        /// https://msdn.microsoft.com/ja-jp/library/windows/desktop/dd183516.aspx
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DllImport(LibName)]
+        public static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect,
+            int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
+
+        #region Fields
+        const string LibName = "Gdi32.dll";
+        #endregion
+
     }
 }

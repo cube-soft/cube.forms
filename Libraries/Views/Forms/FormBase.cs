@@ -16,6 +16,7 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using Cube.Log;
@@ -24,14 +25,18 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Form
+    /// FormBase
     /// 
     /// <summary>
-    /// System.Windows.Forms.Form の拡張クラスです。
+    /// 各種フォームの基底となるクラスです。
     /// </summary>
+    /// 
+    /// <remarks>
+    /// System.Windows.Forms.Form をベースに実装されています。
+    /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public class Form : System.Windows.Forms.Form
+    public class FormBase : System.Windows.Forms.Form, IForm
     {
         #region Constructors
 
@@ -44,7 +49,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public Form() : base()
+        public FormBase() : base()
         {
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             DoubleBuffered = true;
@@ -59,6 +64,34 @@ namespace Cube.Forms
         #endregion
 
         #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Bootstrap
+        /// 
+        /// <summary>
+        /// プロセス間通信を介した起動およびアクティブ化を制御するための
+        /// オブジェクトを取得または設定します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public Cube.Processes.Bootstrap Bootstrap
+        {
+            get { return _bootstrap; }
+            set
+            {
+                if (_bootstrap == value) return;
+                if (_bootstrap != null) _bootstrap.Received -= WhenReceived;
+                _bootstrap = value;
+                if (_bootstrap != null)
+                {
+                    _bootstrap.Received -= WhenReceived;
+                    _bootstrap.Received += WhenReceived;
+                }
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -84,111 +117,86 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Bootstrap
+        /// EventAggregator
         /// 
         /// <summary>
-        /// プロセス間通信を介した起動およびアクティブ化を制御するための
-        /// オブジェクトを取得または設定します。
+        /// イベントを集約するためのオブジェクトを取得または設定します。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// Controls に登録されている ControlBase オブジェクトに対して、
+        /// 再帰的に設定します。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Cube.Processes.Bootstrap Bootstrap
+        public IEventAggregator EventAggregator
         {
-            get { return _bootstrap; }
+            get { return _events; }
             set
             {
-                if (_bootstrap == value) return;
-                if (_bootstrap != null) _bootstrap.Received -= Bootstrap_Received;
-                _bootstrap = value;
-                if (_bootstrap != null)
+                if (_events == value) return;
+                _events = value;
+                foreach (var obj in Controls)
                 {
-                    _bootstrap.Received -= Bootstrap_Received;
-                    _bootstrap.Received += Bootstrap_Received;
+                    var control = obj as ControlBase;
+                    if (control == null) continue;
+                    control.EventAggregator = value;
                 }
             }
         }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ShortcutKeys
+        /// 
+        /// <summary>
+        /// ショートカットキーの一覧を取得します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// ShortcutKeys に登録された動作が ProcessCmdKey(Message, Keys)
+        /// にて実行されます。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IDictionary<System.Windows.Forms.Keys, Action> ShortcutKeys { get; }
+            = new Dictionary<System.Windows.Forms.Keys, Action>();
 
         #endregion
 
         #region Events
 
-        #region Showing
+        #region VisibleChanging
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Showing
+        /// VisibleChanging
         /// 
         /// <summary>
-        /// フォームが表示される直前に発生するイベントです。
+        /// Visible プロパティの値が変更される直前に発生するイベントです。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event CancelEventHandler Showing;
+        public event CancelEventHandler VisibleChanging;
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnShowing
+        /// OnVisibleChanging
         /// 
         /// <summary>
-        /// Showing イベントを発生させます。
+        /// VisibleChanging イベントを発生させます。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnShowing(CancelEventArgs e) => Showing?.Invoke(this, e);
-
-        #endregion
-
-        #region Hiding
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Hiding
-        /// 
-        /// <summary>
-        /// フォームが非表示になる直前に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public event CancelEventHandler Hiding;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnHiding
-        /// 
-        /// <summary>
-        /// Hiding イベントを発生させます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnHiding(CancelEventArgs e) => Hiding?.Invoke(this, e);
-
-        #endregion
-
-        #region Hidden
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Hidden
-        /// 
-        /// <summary>
-        /// フォームが非表示なった直後に発生するイベントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public event EventHandler Hidden;
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// OnHidden
-        /// 
-        /// <summary>
-        /// Hidden イベントを発生させます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected virtual void OnHidden(EventArgs e) => Hidden?.Invoke(this, e);
+        protected virtual void OnVisibleChanging(CancelEventArgs e)
+        {
+            if (Visible != false) AdjustDesktopLocation();
+            VisibleChanging?.Invoke(this, e);
+        }
 
         #endregion
 
@@ -203,7 +211,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EventHandler<ValueEventArgs<object>> Received;
+        public event ValueEventHandler<object> Received;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -214,7 +222,8 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnReceived(ValueEventArgs<object> e) => Received?.Invoke(this, e);
+        protected virtual void OnReceived(ValueEventArgs<object> e)
+            => Received?.Invoke(this, e);
 
         #endregion
 
@@ -229,7 +238,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EventHandler<ValueEventArgs<double>> DpiChanged;
+        public event ValueEventHandler<double> DpiChanged;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -240,7 +249,8 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnDpiChanged(ValueEventArgs<double> e) => DpiChanged?.Invoke(this, e);
+        protected virtual void OnDpiChanged(ValueEventArgs<double> e)
+            => DpiChanged?.Invoke(this, e);
 
         #endregion
 
@@ -255,7 +265,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EventHandler<QueryEventArgs<Point, Position>> NcHitTest;
+        public event QueryEventHandler<Point, Position> NcHitTest;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -291,10 +301,16 @@ namespace Cube.Forms
         {
             var screen = System.Windows.Forms.Screen.FromPoint(DesktopLocation) ??
                          System.Windows.Forms.Screen.PrimaryScreen;
+            var x      = DesktopLocation.X;
+            var y      = DesktopLocation.Y;
+
             var left   = screen.WorkingArea.Left;
             var top    = screen.WorkingArea.Top;
             var right  = screen.WorkingArea.Right;
             var bottom = screen.WorkingArea.Bottom;
+
+            if (x >= left && x +  Width <=  right &&
+                y >=  top && y + Height <= bottom) return;
 
             SetDesktopLocation(
                 Math.Min(Math.Max(DesktopLocation.X, left), right - Width),
@@ -305,8 +321,6 @@ namespace Cube.Forms
         #endregion
 
         #region Implementations
-
-        #region Override methods
 
         /* ----------------------------------------------------------------- */
         ///
@@ -320,11 +334,29 @@ namespace Cube.Forms
         protected override void SetVisibleCore(bool value)
         {
             var prev = Visible;
-            var ev = new CancelEventArgs();
-            RaiseChangingVisibleEvent(prev, value, ev);
-            base.SetVisibleCore(ev.Cancel ? prev : value);
-            if (prev == value || ev.Cancel) return;
-            RaiseVisibleChangedEvent(value, prev, EventArgs.Empty);
+            var args = new CancelEventArgs();
+            OnVisibleChanging(args);
+            base.SetVisibleCore(args.Cancel ? prev : value);
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ProcessCmdKey
+        ///
+        /// <summary>
+        /// ショートカットキーを処理します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected override bool ProcessCmdKey(ref System.Windows.Forms.Message msg,
+            System.Windows.Forms.Keys keys)
+        {
+            if (ShortcutKeys.ContainsKey(keys))
+            {
+                ShortcutKeys[keys]();
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keys);
         }
 
         /* ----------------------------------------------------------------- */
@@ -355,13 +387,9 @@ namespace Cube.Forms
             }
         }
 
-        #endregion
-
-        #region Event handlers
-
         /* ----------------------------------------------------------------- */
         ///
-        /// Bootstrap_Received
+        /// WhenReceived
         /// 
         /// <summary>
         /// 他プロセスからメッセージを受信（アクティブ化）した時に実行
@@ -369,9 +397,9 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void Bootstrap_Received(object sender, ValueEventArgs<object> e)
+        private void WhenReceived(object sender, ValueEventArgs<object> e)
         {
-            if (InvokeRequired) Invoke(new Action(() => Bootstrap_Received(sender, e)));
+            if (InvokeRequired) Invoke(new Action(() => WhenReceived(sender, e)));
             else
             {
                 Show();
@@ -382,44 +410,6 @@ namespace Cube.Forms
 
                 OnReceived(e);
             }
-        }
-
-        #endregion
-
-        #region Other private methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RaiseChangingVisibleEvent
-        /// 
-        /// <summary>
-        /// 表示状態の変更に関するイベントを発生させます。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void RaiseChangingVisibleEvent(bool current, bool ahead, CancelEventArgs e)
-        {
-            if (!current && ahead) OnShowing(e);
-            else if (current && !ahead) OnHiding(e);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// RaiseVisibleChangedEvent
-        /// 
-        /// <summary>
-        /// 表示状態が変更された事を通知するイベントを発生させます。
-        /// </summary>
-        /// 
-        /// <remarks>
-        /// TODO: システムによる Shown イベントは最初の 1 度しか発生しない
-        /// 模様。Showing イベント等との整合性をどうするか検討する。
-        /// </remarks>
-        ///
-        /* ----------------------------------------------------------------- */
-        private void RaiseVisibleChangedEvent(bool current, bool behind, EventArgs e)
-        {
-            if (!current && behind) OnHidden(e);
         }
 
         /* ----------------------------------------------------------------- */
@@ -438,11 +428,10 @@ namespace Cube.Forms
             return new Point(x, y);
         }
 
-        #endregion
-
         #region Fields
         private double _dpi = 0.0;
         private Cube.Processes.Bootstrap _bootstrap = null;
+        private IEventAggregator _events;
         #endregion
 
         #endregion

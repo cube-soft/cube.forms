@@ -16,20 +16,25 @@
 ///
 /* ------------------------------------------------------------------------- */
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UserControl
+    /// ControlBase
     /// 
     /// <summary>
-    /// System.Windows.Forms.UserControl を拡張したクラスです。
+    /// 各種コントロールの基底となるクラスです。
     /// </summary>
+    /// 
+    /// <remarks>
+    /// System.Windows.Forms.UserControl をベースに実装されています。
+    /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public class UserControl : System.Windows.Forms.UserControl
+    public class ControlBase : System.Windows.Forms.UserControl, IControl
     {
         #region Constructors
 
@@ -42,11 +47,47 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public UserControl()
+        public ControlBase()
             : base()
         {
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             DoubleBuffered = true;
+        }
+
+        #endregion
+
+        #region Properties
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// EventAggregator
+        /// 
+        /// <summary>
+        /// イベントを集約するためのオブジェクトを取得または設定します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// Controls に登録されている ControlBase オブジェクトに対して、
+        /// 再帰的に設定します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IEventAggregator EventAggregator
+        {
+            get { return _events; }
+            set
+            {
+                if (_events == value) return;
+                _events = value;
+                foreach (var obj in Controls)
+                {
+                    var control = obj as ControlBase;
+                    if (control == null) continue;
+                    control.EventAggregator = value;
+                }
+            }
         }
 
         #endregion
@@ -62,11 +103,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EventHandler<QueryEventArgs<Point, Position>> NcHitTest;
-
-        #endregion
-
-        #region Virtual methods
+        public event QueryEventHandler<Point, Position> NcHitTest;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -113,6 +150,10 @@ namespace Cube.Forms
             }
         }
 
+        #endregion
+
+        #region Fields
+        private IEventAggregator _events;
         #endregion
     }
 }

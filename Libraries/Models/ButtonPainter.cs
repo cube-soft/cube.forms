@@ -17,7 +17,6 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
 using Cube.Forms.Drawing;
 
@@ -25,14 +24,14 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FlatButtonPainter
+    /// ButtonPainter
     /// 
     /// <summary>
     /// ボタンの外観を描画するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class FlatButtonPainter
+    internal class ButtonPainter
     {
         #region Constructors
 
@@ -45,16 +44,18 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public FlatButtonPainter(ButtonBase view)
+        public ButtonPainter(System.Windows.Forms.ButtonBase view)
         {
-            View = view;
+            View    = view;
+            Content = view?.GetType().Name;
+
             View.Paint      += (s, e) => OnPaint(e);
             View.MouseEnter += (s, e) => OnMouseEnter(e);
             View.MouseLeave += (s, e) => OnMouseLeave(e);
             View.MouseDown  += (s, e) => OnMouseDown(e);
             View.MouseUp    += (s, e) => OnMouseUp(e);
 
-            InitializeSurface();
+            DisableSystemStyles();
         }
 
         #endregion
@@ -70,7 +71,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ButtonBase View { get; private set; } = null;
+        public System.Windows.Forms.ButtonBase View { get; private set; } = null;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -85,7 +86,7 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Surface
+        /// Styles
         /// 
         /// <summary>
         /// ボタンの基本となる外観を定義したオブジェクトを取得します。
@@ -140,14 +141,14 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnPaint(PaintEventArgs e)
+        protected virtual void OnPaint(System.Windows.Forms.PaintEventArgs e)
         {
             if (e == null || e.Graphics == null) return;
 
             var gs = e.Graphics;
             var client = View.ClientRectangle;
             var bounds = GetDrawBounds(client, View.Padding);
-            gs.FillBackground(client, GetBackColor());
+            gs.FillBackground(GetBackColor());
             gs.DrawImage(client, GetBackgroundImage(), View.BackgroundImageLayout);
             gs.DrawImage(bounds, GetImage(), View.ImageAlign);
             gs.DrawText(bounds, Content, View.Font, GetContentColor(), View.TextAlign);
@@ -187,8 +188,8 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnMouseDown(MouseEventArgs e)
-            => IsMouseDown = (e.Button == MouseButtons.Left);
+        protected virtual void OnMouseDown(System.Windows.Forms.MouseEventArgs e)
+            => IsMouseDown = (e.Button == System.Windows.Forms.MouseButtons.Left);
 
         /* ----------------------------------------------------------------- */
         ///
@@ -199,7 +200,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnMouseUp(MouseEventArgs e)
+        protected virtual void OnMouseUp(System.Windows.Forms.MouseEventArgs e)
         {
             IsMouseDown = false;
             View.Invalidate();
@@ -207,11 +208,11 @@ namespace Cube.Forms
 
         #endregion
 
-        #region Initialize methods
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
-        /// InitializeSurface
+        /// DisableSystemStyles
         /// 
         /// <summary>
         /// 外観の描画に関して ButtonBase オブジェクトと競合するプロパティを
@@ -219,27 +220,23 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void InitializeSurface()
+        private void DisableSystemStyles()
         {
-            var transparent = Color.FromArgb(0, 255, 255, 255);
+            var color = Color.Empty;
 
-            View.BackColor = transparent;
-            View.ForeColor = transparent;
+            View.BackColor = color;
+            View.ForeColor = color;
             View.BackgroundImage = null;
             View.Image = null;
             View.Text = string.Empty;
-            View.FlatStyle = FlatStyle.Flat;
-            View.FlatAppearance.BorderColor = transparent;
+            View.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            View.FlatAppearance.BorderColor = color;
             View.FlatAppearance.BorderSize = 0;
-            View.FlatAppearance.CheckedBackColor = transparent;
-            View.FlatAppearance.MouseDownBackColor = transparent;
-            View.FlatAppearance.MouseOverBackColor = transparent;
+            View.FlatAppearance.CheckedBackColor = color;
+            View.FlatAppearance.MouseDownBackColor = color;
+            View.FlatAppearance.MouseOverBackColor = color;
             View.UseVisualStyleBackColor = false;
         }
-
-        #endregion
-
-        #region Others
 
         /* ----------------------------------------------------------------- */
         ///
@@ -325,14 +322,31 @@ namespace Cube.Forms
         /// <summary>
         /// 現在の背景色を取得します。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// 背景色の描画を行わない場合、FocusCue 等の意図しないものが描画
+        /// される可能性があるため、可能な限り Color.Empty 以外の値を返す
+        /// ようにしています。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        private Color GetBackColor() => Select(
-            Styles.NormalStyle.BackColor,
-            Styles.CheckedStyle.BackColor,
-            Styles.MouseOverStyle.BackColor,
-            Styles.MouseDownStyle.BackColor
-        );
+        private Color GetBackColor()
+        {
+            var dest = Select(
+                Styles.NormalStyle.BackColor,
+                Styles.CheckedStyle.BackColor,
+                Styles.MouseOverStyle.BackColor,
+                Styles.MouseDownStyle.BackColor
+            );
+
+            if (dest != Color.Empty) return dest;
+
+            for (var c = View.Parent; c != null; c = c.Parent)
+            {
+                if (c.BackColor != Color.Empty) return c.BackColor;
+            }
+            return Color.Empty;
+        }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -391,7 +405,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Rectangle GetDrawBounds(Rectangle client, Padding padding)
+        private Rectangle GetDrawBounds(Rectangle client, System.Windows.Forms.Padding padding)
         {
             var x = client.Left + padding.Left;
             var y = client.Top + padding.Top;
@@ -399,6 +413,115 @@ namespace Cube.Forms
             var height = client.Bottom - padding.Bottom - y;
 
             return new Rectangle(x, y, width, height);
+        }
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// RadioButtonPainter
+    /// 
+    /// <summary>
+    /// ラジオボタンの外観を描画するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal class RadioButtonPainter : ButtonPainter
+    {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// RadioButtonPainter
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public RadioButtonPainter(System.Windows.Forms.RadioButton view)
+            : base(view)
+        {
+            view.CheckedChanged += (s, e) => OnCheckedChanged(e);
+            view.Appearance = System.Windows.Forms.Appearance.Button;
+            view.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+        }
+
+        #endregion
+
+        #region Virtual methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnCheckedChanged
+        /// 
+        /// <summary>
+        /// 描画対象となるボタンの CheckedChanged イベントを捕捉する
+        /// ハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnCheckedChanged(EventArgs e)
+        {
+            var control = View as System.Windows.Forms.RadioButton;
+            if (control == null) return;
+            IsChecked = control.Checked;
+            control.Invalidate();
+        }
+
+        #endregion
+    }
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// ToggleButtonPainter
+    /// 
+    /// <summary>
+    /// トグルボタンの外観を描画するためのクラスです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    internal class ToggleButtonPainter : ButtonPainter
+    {
+        #region Constructors
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ToggleButtonPainter
+        /// 
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ToggleButtonPainter(System.Windows.Forms.CheckBox view)
+            : base(view)
+        {
+            view.CheckedChanged += (s, e) => OnCheckedChanged(e);
+            view.Appearance = System.Windows.Forms.Appearance.Button;
+            view.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+        }
+
+        #endregion
+
+        #region Virtual methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnCheckedChanged
+        /// 
+        /// <summary>
+        /// 描画対象となるボタンの CheckedChanged イベントを捕捉する
+        /// ハンドラです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnCheckedChanged(EventArgs e)
+        {
+            var control = View as System.Windows.Forms.CheckBox;
+            if (control == null) return;
+            IsChecked = control.Checked;
         }
 
         #endregion

@@ -44,7 +44,7 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        [DefaultValue(typeof(Color), "Control")]
+        [DefaultValue(typeof(Color), "")]
         public Color BackColor
         {
             get { return _backColor; }
@@ -78,7 +78,7 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        [DefaultValue(typeof(Color), "ActiveBorder")]
+        [DefaultValue(typeof(Color), "")]
         public Color BorderColor
         {
             get { return _borderColor; }
@@ -96,7 +96,7 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        [DefaultValue(0)]
+        [DefaultValue(-1)]
         public int BorderSize
         {
             get { return _borderSize; }
@@ -130,7 +130,7 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [Browsable(true)]
-        [DefaultValue(typeof(Color), "ControlText")]
+        [DefaultValue(typeof(Color), "")]
         public Color ContentColor
         {
             get { return _contentColor; }
@@ -140,12 +140,12 @@ namespace Cube.Forms
         #endregion
 
         #region Fields
-        private Color _backColor = SystemColors.Control;
-        private Color _borderColor = SystemColors.ActiveBorder;
-        private Color _contentColor = SystemColors.ControlText;
+        private Color _backColor = Color.Empty;
+        private Color _borderColor = Color.Empty;
+        private Color _contentColor = Color.Empty;
         private Image _backgroundImage = null;
         private Image _image = null;
-        private int _borderSize = 0;
+        private int _borderSize = -1;
         #endregion
     }
 
@@ -195,7 +195,12 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public ButtonStyle NormalStyle { get; } = new ButtonStyle();
+        public ButtonStyle NormalStyle { get; } = new ButtonStyle
+        {
+            ContentColor = SystemColors.ControlText,
+            BorderColor  = SystemColors.ActiveBorder,
+            BorderSize   = 1
+        };
 
         /* ----------------------------------------------------------------- */
         ///
@@ -219,7 +224,12 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public ButtonStyle DisabledStyle { get; } = new ButtonStyle();
+        public ButtonStyle DisabledStyle { get; } = new ButtonStyle()
+        {
+            BackColor    = SystemColors.Control,
+            ContentColor = SystemColors.GrayText,
+            BorderColor  = SystemColors.InactiveBorder
+        };
 
         /* ----------------------------------------------------------------- */
         ///

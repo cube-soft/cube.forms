@@ -15,80 +15,86 @@
 /// limitations under the License.
 ///
 /* ------------------------------------------------------------------------- */
-using System;
+using System.Drawing;
 
 namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ToggleButtonPainter
+    /// IControl
     /// 
     /// <summary>
-    /// トグルボタンの外観を描画するためのクラスです。
+    /// 各種コントロールのインターフェースです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal class ToggleButtonPainter : FlatButtonPainter
+    public interface IControl
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
-        /// ToggleButtonPainter
+        /// Location
         /// 
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// 表示位置を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ToggleButtonPainter(System.Windows.Forms.CheckBox view)
-            : base(view)
-        {
-            view.CheckedChanged += (s, e) => OnCheckedChanged(e);
-            InitializeSurface();
-        }
-
-        #endregion
-
-        #region Virtual methods
+        Point Location { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnCheckedChanged
+        /// Size
         /// 
         /// <summary>
-        /// 描画対象となるボタンの CheckedChanged イベントを捕捉する
-        /// ハンドラです。
+        /// 表示サイズを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnCheckedChanged(EventArgs e)
-        {
-            var control = View as System.Windows.Forms.CheckBox;
-            if (control == null) return;
-            IsChecked = control.Checked;
-        }
-
-        #endregion
-
-        #region Others
+        Size Size { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// InitializeSurface
+        /// EventAggregator
         /// 
         /// <summary>
-        /// 外観の描画に関して CheckBox オブジェクトと競合するプロパティを
-        /// 無効にします。
+        /// イベントを集約するためのオブジェクトを取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void InitializeSurface()
-        {
-            var radio = View as System.Windows.Forms.CheckBox;
-            if (radio != null) radio.Appearance = System.Windows.Forms.Appearance.Button;
-        }
+        IEventAggregator EventAggregator { get; set; }
+    }
 
-        #endregion
+    /* --------------------------------------------------------------------- */
+    ///
+    /// IForm
+    /// 
+    /// <summary>
+    /// 各種フォームのインターフェースです。
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public interface IForm : IControl
+    {
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Show
+        /// 
+        /// <summary>
+        /// 画面を表示します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        void Show();
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Close
+        /// 
+        /// <summary>
+        /// 画面を終了させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        void Close();
     }
 }
