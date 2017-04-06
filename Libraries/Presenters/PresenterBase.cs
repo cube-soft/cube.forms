@@ -154,7 +154,7 @@ namespace Cube.Forms
         /// </param>
         ///
         /* --------------------------------------------------------------------- */
-        public Task Async(Action action) => Task35.Run(() => action());
+        public Task Async(Action action) => TaskEx.Run(() => action());
 
         /* --------------------------------------------------------------------- */
         ///
@@ -169,7 +169,7 @@ namespace Cube.Forms
         /// </param>
         ///
         /* --------------------------------------------------------------------- */
-        public Task<TResult> Async<TResult>(Func<TResult> func) => Task35.Run(() => func());
+        public Task<TResult> Async<TResult>(Func<TResult> func) => TaskEx.Run(() => func());
 
         /* --------------------------------------------------------------------- */
         ///

@@ -289,10 +289,10 @@ namespace Cube.Forms
                 var screen = System.Windows.Forms.Screen.GetWorkingArea(this);
                 SetDesktopLocation(screen.Width - Width - 1, screen.Height - Height - 1);
 
-                if (delay > TimeSpan.Zero) await Task35.Delay(delay);
+                if (delay > TimeSpan.Zero) await TaskEx.Delay(delay);
                 SetTopMost();
                 Show();
-                if (time > TimeSpan.Zero) await Task35.Delay(time, source.Token);
+                if (time > TimeSpan.Zero) await TaskEx.Delay(time, source.Token);
                 Hide();
             }
             catch (TaskCanceledException /* err */) { }
