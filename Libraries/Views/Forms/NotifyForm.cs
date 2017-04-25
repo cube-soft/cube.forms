@@ -19,7 +19,9 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Threading.Tasks;
+using Cube.Forms.Controls;
 using Cube.Log;
+using Cube.Tasks;
 
 namespace Cube.Forms
 {
@@ -56,34 +58,26 @@ namespace Cube.Forms
 
         /* --------------------------------------------------------------------- */
         ///
-        /// Title
+        /// Value
         /// 
         /// <summary>
-        /// タイトルを取得または設定します。
+        /// 通知内容を取得または設定します。
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        [Browsable(true)]
-        public string Title
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public NotifyItem Value
         {
-            get { return _title.Content; }
-            set { _title.Content = value; }
-        }
+            get { return _value; }
+            private set
+            {
+                if (_value == value) return;
+                _value = value;
 
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Description
-        /// 
-        /// <summary>
-        /// 本文を取得または設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        [Browsable(true)]
-        public string Description
-        {
-            get { return _text.Content; }
-            set { _text.Content = value; }
+                _title.Content = value?.Title ?? string.Empty;
+                _text.Content  = value?.Description ?? string.Empty;
+            }
         }
 
         /* --------------------------------------------------------------------- */
@@ -113,7 +107,8 @@ namespace Cube.Forms
         ///
         /* --------------------------------------------------------------------- */
         [Browsable(false)]
-        public bool IsBusy { get; private set; }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool IsBusy { get; private set; } = false;
 
         /* --------------------------------------------------------------------- */
         ///
@@ -152,6 +147,8 @@ namespace Cube.Forms
 
         #region Events
 
+        #region Selected
+
         /* ----------------------------------------------------------------- */
         ///
         /// Selected
@@ -173,7 +170,42 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         protected virtual void OnSelected(ValueEventArgs<NotifyComponents> e)
-            => Selected?.Invoke(this, e);
+        {
+            Selected?.Invoke(this, e);
+            Hide();
+        }
+
+        #endregion
+
+        #region Completed
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Completed
+        /// 
+        /// <summary>
+        /// 通知完了時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event EventHandler Completed;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnCompleted
+        /// 
+        /// <summary>
+        /// Completed イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnCompleted(EventArgs e)
+        {
+            IsBusy = false;
+            Completed?.Invoke(this, e);
+        }
+
+        #endregion
 
         #endregion
 
@@ -206,41 +238,9 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         public void Show(NotifyItem item, NotifyStyle style)
         {
-            Title       = item.Title;
-            Description = item.Description;
-
+            Value = item;
             SetStyle(style);
-            Show(item.DisplayTime, item.InitialDelay);
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Show
-        /// 
-        /// <summary>
-        /// フォームを表示します。
-        /// </summary>
-        /// 
-        /// <param name="time">表示時間</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Show(TimeSpan time) => Show(time, TimeSpan.Zero);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Show
-        /// 
-        /// <summary>
-        /// フォームを表示します。
-        /// </summary>
-        /// 
-        /// <param name="time">表示時間</param>
-        /// <param name="delay">表示されるまでの時間</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Show(TimeSpan time, TimeSpan delay)
-        {
-            var _ = ShowAsync(time, delay);
+            ShowAsync(item.DisplayTime, item.InitialDelay).Forget();
         }
 
         #endregion
@@ -249,23 +249,33 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnBackColorChanged
+        /// Show
         /// 
         /// <summary>
-        /// 背景色が変化した時に実行されます。
+        /// 画面を表示します。
         /// </summary>
+        /// 
+        /// <remarks>
+        /// 外部から実行できないように private で再定義します。
+        /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnBackColorChanged(EventArgs e)
-        {
-            base.OnBackColorChanged(e);
+        private new void Show() => base.Show();
 
-            _panel.BackColor                    =
-            _close.Styles.NormalStyle.BackColor =
-            _image.Styles.NormalStyle.BackColor =
-            _title.Styles.NormalStyle.BackColor =
-            _text.Styles.NormalStyle.BackColor  = BackColor;
-        }
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ShowDialog
+        /// 
+        /// <summary>
+        /// 画面を表示します。
+        /// </summary>
+        /// 
+        /// <remarks>
+        /// 外部から実行できないように private で再定義します。
+        /// </remarks>
+        ///
+        /* ----------------------------------------------------------------- */
+        private new System.Windows.Forms.DialogResult ShowDialog() => base.ShowDialog();
 
         /* ----------------------------------------------------------------- */
         ///
@@ -274,7 +284,7 @@ namespace Cube.Forms
         /// <summary>
         /// 指定時間フォームを表示します。
         /// </summary>
-        ///
+        /// 
         /* ----------------------------------------------------------------- */
         private async Task ShowAsync(TimeSpan time, TimeSpan delay)
         {
@@ -286,22 +296,24 @@ namespace Cube.Forms
             {
                 IsBusy = true;
 
-                var screen = System.Windows.Forms.Screen.GetWorkingArea(this);
+                var screen = System.Windows.Forms.Screen.GetWorkingArea(Location);
                 SetDesktopLocation(screen.Width - Width - 1, screen.Height - Height - 1);
 
-                if (delay > TimeSpan.Zero) await TaskEx.Delay(delay);
-                SetTopMost();
-                Show();
-                if (time > TimeSpan.Zero) await TaskEx.Delay(time, source.Token);
-                Hide();
+                this.SetTopMost(false);
+                if (delay > TimeSpan.Zero) await TaskEx.Delay(delay).ConfigureAwait(false);
+                if (InvokeRequired) Invoke((Action)(() => Show()));
+                else Show();
+                if (time > TimeSpan.Zero) await TaskEx.Delay(time, source.Token).ConfigureAwait(false);
+                if (InvokeRequired) Invoke((Action)(() => Hide()));
+                else Hide();
             }
             catch (TaskCanceledException /* err */) { }
             catch (OperationCanceledException /* err */) { }
-            catch (Exception err) { this.LogError(err.Message, err); }
+            catch (Exception err) { this.LogWarn(err.ToString()); }
             finally
             {
                 VisibleChanged -= m;
-                IsBusy = false;
+                OnCompleted(EventArgs.Empty);
             }
         }
 
@@ -317,40 +329,20 @@ namespace Cube.Forms
         private void SetStyle(NotifyStyle style)
         {
             if (style == null) return;
-            if (style.BackColor != Color.Empty) BackColor = style.BackColor;
             if (style.ImageColor != Color.Empty) _image.Styles.NormalStyle.BackColor = style.ImageColor;
             if (style.Image != null) _image.Styles.NormalStyle.Image = style.Image;
             if (style.Title != null) _title.Font = style.Title;
             if (style.TitleColor != Color.Empty) _title.Styles.NormalStyle.ContentColor = style.TitleColor;
             if (style.Description != null) _text.Font = style.Description;
             if (style.DescriptionColor != Color.Empty) _text.Styles.NormalStyle.ContentColor = style.DescriptionColor;
-        }
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// SetTopMost
-        /// 
-        /// <summary>
-        /// 最前面に表示するように設定します。
-        /// </summary>
-        ///
-        /* --------------------------------------------------------------------- */
-        private void SetTopMost()
-        {
-            const uint SWP_NOSIZE         = 0x0001;
-            const uint SWP_NOMOVE         = 0x0002;
-            const uint SWP_NOACTIVATE     = 0x0010;
-            const uint SWP_NOSENDCHANGING = 0x0400;
-
-            User32.NativeMethods.SetWindowPos(
-                Handle,
-                (IntPtr)(-1), /* HWND_TOPMOST */
-                0,
-                0,
-                0,
-                0,
-                SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSENDCHANGING | SWP_NOSIZE
-            );
+            if (style.BackColor != Color.Empty)
+            {
+                BackColor                           = 
+                _panel.BackColor                    =
+                _close.Styles.NormalStyle.BackColor =
+                _title.Styles.NormalStyle.BackColor =
+                _text.Styles.NormalStyle.BackColor  = style.BackColor;
+            }
         }
 
         /* --------------------------------------------------------------------- */
@@ -378,11 +370,11 @@ namespace Cube.Forms
             _title = new FlatButton();
             _title.Content = string.Empty;
             _title.Dock = System.Windows.Forms.DockStyle.Fill;
-            _title.Font = new Font(Font, FontStyle.Bold);
+            _title.Font = FontFactory.Create(12, FontStyle.Bold, GraphicsUnit.Pixel);
             _title.Margin = new System.Windows.Forms.Padding(0);
             _title.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             _title.TextAlign = ContentAlignment.MiddleLeft;
-            _title.Styles.NormalStyle.BackColor = Color.White;
+            _title.Styles.NormalStyle.BackColor = SystemColors.Window;
             _title.Styles.NormalStyle.BorderSize = 0;
             _title.Styles.NormalStyle.ContentColor = Color.DimGray;
             _title.Click += (s, e) => OnSelected(ValueEventArgs.Create(NotifyComponents.Title));
@@ -395,7 +387,7 @@ namespace Cube.Forms
             _text.Margin = new System.Windows.Forms.Padding(0);
             _text.Padding = new System.Windows.Forms.Padding(4, 0, 4, 0);
             _text.TextAlign = ContentAlignment.TopLeft;
-            _text.Styles.NormalStyle.BackColor = Color.White;
+            _text.Styles.NormalStyle.BackColor = SystemColors.Window;
             _text.Styles.NormalStyle.BorderSize = 0;
             _text.Click += (s, e) => OnSelected(ValueEventArgs.Create(NotifyComponents.Description));
 
@@ -403,14 +395,14 @@ namespace Cube.Forms
             _close.Content = string.Empty;
             _close.Dock = System.Windows.Forms.DockStyle.Fill;
             _close.Margin = new System.Windows.Forms.Padding(0);
-            _close.Styles.NormalStyle.BackColor = Color.White;
+            _close.Styles.NormalStyle.BackColor = SystemColors.Window;
             _close.Styles.NormalStyle.BorderSize = 0;
             _close.Styles.NormalStyle.Image = Properties.Resources.CloseButton;
             _close.Styles.MouseOverStyle.BackColor = Color.FromArgb(240, 240, 240);
             _close.Styles.MouseOverStyle.BorderColor = Color.FromArgb(230, 230, 230);
             _close.Styles.MouseOverStyle.BorderSize = 1;
             _close.Styles.MouseDownStyle.BackColor = Color.FromArgb(236, 236, 236);
-            _close.Click += (s, e) => Hide();
+            _close.Click += (s, e) => OnSelected(ValueEventArgs.Create(NotifyComponents.Others));
 
             _panel = new TableLayoutPanel();
             _panel.SuspendLayout();
@@ -418,9 +410,9 @@ namespace Cube.Forms
             _panel.ColumnCount = 3;
             _panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 64F));
             _panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            _panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            _panel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             _panel.RowCount = 2;
-            _panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            _panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             _panel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             _panel.Controls.Add(_image, 0, 0);
             _panel.Controls.Add(_title, 1, 0);
@@ -429,14 +421,16 @@ namespace Cube.Forms
             _panel.SetRowSpan(_image, 2);
 
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            BackColor = SystemColors.Window;
-            ClientSize = new Size(350, 64);
-            Font = FontFactory.Create(12, FontStyle.Regular, GraphicsUnit.Pixel);
-            IsBusy = false;
-            MaximizeBox = false;
-            MinimizeBox = false;
+            BackColor     = SystemColors.Window;
+            Size          = new Size(350, 80);
+            Font          = FontFactory.Create(12, FontStyle.Regular, GraphicsUnit.Pixel);
+            IsBusy        = false;
+            Location      = new Point(0, 0);
+            MaximizeBox   = false;
+            MinimizeBox   = false;
             ShowInTaskbar = false;
-            Sizable = false;
+            Sizable       = false;
+
             Controls.Add(_panel);
 
             _panel.ResumeLayout(false);
@@ -444,6 +438,7 @@ namespace Cube.Forms
         }
 
         #region Fields
+        private NotifyItem _value;
         private TableLayoutPanel _panel;
         private FlatButton _image;
         private FlatButton _title;

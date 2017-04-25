@@ -91,6 +91,7 @@
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Views\IControl.cs" />
     <Compile Include="Views\INotifyView.cs" />
+    <Compile Include="Views\IWebView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Views\Controls\Buttons\Button.cs">
@@ -147,7 +148,11 @@
     <Compile Include="Views\Controls\VersionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Views\Controls\WebBrowser.cs">
+    <Compile Include="Views\Controls\WebControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\Controls\WebControl.Subclass.cs">
+      <DependentUpon>WebControl.cs</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Views\Forms\BorderlessForm.cs">
@@ -178,7 +183,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
- <ItemGroup>
+  <ItemGroup>
     <None Include="Resources\CloseButton.png" />
     <None Include="Resources\LogoLarge.png" />
     <None Include="Resources\LogoSmall.png" />

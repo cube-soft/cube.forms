@@ -33,7 +33,7 @@ namespace Cube.Forms
     /* --------------------------------------------------------------------- */
     public class PresenterBase<TView> : IDisposable
     {
-        #region Constructors and destructors
+        #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
@@ -46,9 +46,7 @@ namespace Cube.Forms
         /// <param name="view">View オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public PresenterBase(TView view)
-            : this(view, null)
-        { }
+        public PresenterBase(TView view) : this(view, null) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -63,8 +61,7 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         public PresenterBase(TView view, IEventAggregator events)
-            : this(view, events, SynchronizationContext.Current)
-        { }
+            : this(view, events, SynchronizationContext.Current) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -86,20 +83,6 @@ namespace Cube.Forms
             SynchronizationContext = context;
         }
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ~PresenterBase
-        /// 
-        /// <summary>
-        /// オブジェクトを破棄します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        ~PresenterBase()
-        {
-            Dispose(false);
-        }
-
         #endregion
 
         #region Properties
@@ -113,7 +96,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TView View { get; private set; }
+        public TView View { get; protected set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -124,7 +107,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public IEventAggregator EventAggregator { get; set; }
+        public IEventAggregator EventAggregator { get; protected set; }
 
         /* --------------------------------------------------------------------- */
         ///
@@ -185,7 +168,10 @@ namespace Cube.Forms
         ///
         /* --------------------------------------------------------------------- */
         public void Sync(Action action)
-            => this.LogException(() => SynchronizationContext.Post(_ => action(), null));
+        {
+            try { SynchronizationContext.Post(_ => action(), null); }
+            catch (Exception err) { this.LogWarn(err.ToString()); }
+        }
 
         /* --------------------------------------------------------------------- */
         ///
@@ -202,7 +188,10 @@ namespace Cube.Forms
         ///
         /* --------------------------------------------------------------------- */
         public void SyncWait(Action action)
-            => this.LogException(() => SynchronizationContext.Send(_ => action(), null));
+        {
+            try { SynchronizationContext.Send(_ => action(), null); }
+            catch (Exception err) { this.LogWarn(err.ToString()); }
+        }
 
         /* --------------------------------------------------------------------- */
         ///
@@ -222,13 +211,11 @@ namespace Cube.Forms
         {
             TResult result = default(TResult);
             try { SynchronizationContext.Send(_ => { result = func(); }, null); }
-            catch (Exception err) { this.LogError(err.Message, err); }
+            catch (Exception err) { this.LogWarn(err.ToString()); }
             return result;
         }
 
-        #endregion
-
-        #region Methods for IDisposable
+        #region IDisposable
 
         /* ----------------------------------------------------------------- */
         ///
@@ -255,6 +242,22 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         protected virtual void Dispose(bool disposing) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ~PresenterBase
+        /// 
+        /// <summary>
+        /// オブジェクトを破棄します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        ~PresenterBase()
+        {
+            Dispose(false);
+        }
+
+        #endregion
 
         #endregion
     }
@@ -343,7 +346,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TModel Model { get; private set; }
+        public TModel Model { get; protected set; }
 
         #endregion
     }
@@ -358,8 +361,7 @@ namespace Cube.Forms
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class PresenterBase<TView, TModel, TSettings>
-        : PresenterBase<TView, TModel>
+    public class PresenterBase<TView, TModel, TSettings> : PresenterBase<TView, TModel>
     {
         #region Constructors
 
@@ -437,7 +439,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public TSettings Settings { get; private set; }
+        public TSettings Settings { get; protected set; }
 
         #endregion
     }
