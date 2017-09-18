@@ -33,6 +33,12 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\Cube.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AsyncBridge.Net35">
       <HintPath>..\..\packages\AsyncBridge.Net35.0.2.0\lib\net35-Client\AsyncBridge.Net35.dll</HintPath>
@@ -41,10 +47,10 @@
       <HintPath>..\..\packages\Cube.Backwards.1.4.0\lib\net35\Cube.Backwards.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.4.3\lib\net35\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.Net35.1.5.0\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Images">
-      <HintPath>..\..\packages\Cube.Images.1.4.1\net35\Cube.Images.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Images.Net35.1.5.0\lib\net35\Cube.Images.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
@@ -86,8 +92,10 @@
     <Compile Include="Operations\Bindings.cs" />
     <Compile Include="Operations\Controls.cs" />
     <Compile Include="Operations\Graphics.cs" />
+    <Compile Include="Operations\Processes.cs" />
     <Compile Include="Operations\SelectedIndices.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
+    <Compile Include="Views\Mocks\MockView.cs" />
     <Compile Include="Views\IControl.cs" />
     <Compile Include="Views\INotifyView.cs" />
     <Compile Include="Views\IWebView.cs" />
@@ -183,6 +191,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Cube.snk" />
     <None Include="Packages.config" />
     <None Include="Resources\CloseButton.png" />
     <None Include="Resources\LogoLarge.png" />

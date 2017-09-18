@@ -1,32 +1,21 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>Cube.Forms</id>
-    <version>1.4.2</version>
-    <authors>CubeSoft</authors>
+    <id>Cube.Forms.Net35</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <copyright>$copyright$</copyright>
     <description>Cube forms library.</description>
-    <copyright>Copyright (c) 2010 CubeSoft, Inc.</copyright>
+    <releaseNotes>Private release.</releaseNotes>
+    <tags>Cube Windows Forms</tags>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>https://github.com/cube-soft/Cube.Forms/blob/master/License.txt</licenseUrl>
     <projectUrl>https://github.com/cube-soft/Cube.Forms</projectUrl>
     <iconUrl>https://github.com/cube-soft/Cube.Forms/blob/master/Icon.png</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <releaseNotes>Private release.</releaseNotes>
-    <tags>Cube Windows Forms</tags>
-    <dependencies>
-      <group>
-        <dependency id="log4net" version="2.0.8" />
-        <dependency id="Cube.Core" version="1.4.3" />
-        <dependency id="Cube.Images" version="1.4.1" />
-      </group>
-      <group targetFramework="net35">
-        <dependency id="AsyncBridge.Net35" version="0.2.0" />
-        <dependency id="Cube.Backwards" version="1.4.0" />
-        <dependency id="TaskParallelLibrary" version="1.0.2856.0" />
-      </group>
-    </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\Cube.Forms.dll" target="lib\net45" />
     <file src="bin\net35\Release\Cube.Forms.dll" target="lib\net35" />
   </files>
 </package>
