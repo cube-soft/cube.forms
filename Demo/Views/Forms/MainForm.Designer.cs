@@ -63,12 +63,9 @@
             // 
             this.HeaderCaptionControl.Active = true;
             this.HeaderCaptionControl.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(242)))), ((int)(((byte)(242)))));
-            this.HeaderCaptionControl.CloseBox = true;
             this.HeaderCaptionControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.HeaderCaptionControl.Location = new System.Drawing.Point(0, 0);
             this.HeaderCaptionControl.Margin = new System.Windows.Forms.Padding(0);
-            this.HeaderCaptionControl.MaximizeBox = true;
-            this.HeaderCaptionControl.MinimizeBox = true;
             this.HeaderCaptionControl.Name = "HeaderCaptionControl";
             this.HeaderCaptionControl.Size = new System.Drawing.Size(350, 30);
             this.HeaderCaptionControl.TabIndex = 0;
@@ -114,7 +111,7 @@
             // 
             // DemoButton2
             // 
-            this.DemoButton2.Content = "DemoButton2";
+            this.DemoButton2.Content = "DemoButton1";
             this.DemoButton2.Dock = System.Windows.Forms.DockStyle.Top;
             this.DemoButton2.FlatAppearance.BorderSize = 0;
             this.DemoButton2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -136,7 +133,7 @@
             // 
             // DemoButton3
             // 
-            this.DemoButton3.Content = "DemoButton3";
+            this.DemoButton3.Content = "DemoButton2";
             this.DemoButton3.Dock = System.Windows.Forms.DockStyle.Top;
             this.DemoButton3.FlatAppearance.BorderSize = 0;
             this.DemoButton3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -158,7 +155,7 @@
             // 
             // DemoButton4
             // 
-            this.DemoButton4.Content = "DemoButton4";
+            this.DemoButton4.Content = "DemoButton3";
             this.DemoButton4.Dock = System.Windows.Forms.DockStyle.Top;
             this.DemoButton4.FlatAppearance.BorderSize = 0;
             this.DemoButton4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -180,7 +177,7 @@
             // 
             // DemoButton5
             // 
-            this.DemoButton5.Content = "DemoButton5";
+            this.DemoButton5.Content = "DemoButton4";
             this.DemoButton5.Dock = System.Windows.Forms.DockStyle.Top;
             this.DemoButton5.FlatAppearance.BorderSize = 0;
             this.DemoButton5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -214,7 +211,6 @@
             this.Controls.Add(this.LayoutPanel);
             this.Font = new System.Drawing.Font("Meiryo UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(1920, 1160);
             this.MinimumSize = new System.Drawing.Size(300, 0);
             this.Name = "MainForm";
             this.Text = "Cube.Forms.Demo";

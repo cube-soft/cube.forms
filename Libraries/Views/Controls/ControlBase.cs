@@ -18,6 +18,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using Cube.Forms.Controls;
 
 namespace Cube.Forms
 {
@@ -40,17 +41,15 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UserControl
+        /// ControlBase
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ControlBase()
-            : base()
+        protected ControlBase() : base()
         {
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             DoubleBuffered = true;
         }
 
@@ -67,7 +66,7 @@ namespace Cube.Forms
         /// </summary>
         /// 
         /// <remarks>
-        /// Controls に登録されている ControlBase オブジェクトに対して、
+        /// Controls に登録されている IControl オブジェクトに対して、
         /// 再帰的に設定します。
         /// </remarks>
         ///
@@ -83,16 +82,69 @@ namespace Cube.Forms
                 _events = value;
                 foreach (var obj in Controls)
                 {
-                    var control = obj as ControlBase;
-                    if (control == null) continue;
-                    control.EventHub = value;
+                    if (obj is IControl c) c.EventHub = value;
                 }
+            }
+        }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Dpi
+        /// 
+        /// <summary>
+        /// 現在の Dpi の値を取得または設定します。
+        /// </summary>
+        /// 
+        /* ----------------------------------------------------------------- */
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public double Dpi
+        {
+            get { return _dpi; }
+            set
+            {
+                if (_dpi == value) return;
+                var old = _dpi;
+                _dpi = value;
+                OnDpiChanged(ValueChangedEventArgs.Create(old, value));
             }
         }
 
         #endregion
 
         #region Events
+
+        #region DpiChanged
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// DpiChanged
+        ///
+        /// <summary>
+        /// DPI の値が変化した時に発生するイベントです。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public event ValueChangedEventHandler<double> DpiChanged;
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// OnDpiChanged
+        ///
+        /// <summary>
+        /// DpiChanged イベントを発生させます。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        protected virtual void OnDpiChanged(ValueChangedEventArgs<double> e)
+        {
+            this.UpdateControl(e.OldValue, e.NewValue);
+            DpiChanged?.Invoke(this, e);
+        }
+
+        #endregion
+
+        #region NcHitTest
 
         /* ----------------------------------------------------------------- */
         ///
@@ -119,7 +171,9 @@ namespace Cube.Forms
 
         #endregion
 
-        #region Override methods
+        #endregion
+
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
@@ -150,10 +204,11 @@ namespace Cube.Forms
             }
         }
 
-        #endregion
-
         #region Fields
         private IEventHub _events;
+        private double _dpi = 0.0;
+        #endregion
+
         #endregion
     }
 }

@@ -19,16 +19,17 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using Cube.Forms.Controls;
 using Cube.Log;
 
 namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FormBase
+    /// StandardForm
     /// 
     /// <summary>
-    /// 各種フォームの基底となるクラスです。
+    /// Windows 標準のフォームを表すクラスです。
     /// </summary>
     /// 
     /// <remarks>
@@ -36,20 +37,20 @@ namespace Cube.Forms
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public class FormBase : System.Windows.Forms.Form, IForm
+    public class StandardForm : System.Windows.Forms.Form, IForm
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Form
+        /// StandardForm
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public FormBase() : base()
+        public StandardForm() : base()
         {
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             DoubleBuffered = true;
@@ -77,20 +78,16 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Cube.Processes.IMessenger<string[]> Activator
+        public Cube.Processes.IMessenger<IEnumerable<string>> Activator
         {
             get { return _activator; }
             set
             {
                 if (_activator == value) return;
-                if (_activator != null) _activator.Unsubscribe(WhenActivated);
 
+                _remover?.Dispose();
                 _activator = value;
-                if (_activator != null)
-                {
-                    _activator.Unsubscribe(WhenActivated);
-                    _activator.Subscribe(WhenActivated);
-                }
+                if (_activator != null) _remover = _activator.Subscribe(WhenActivated);
             }
         }
 
@@ -99,7 +96,7 @@ namespace Cube.Forms
         /// Dpi
         /// 
         /// <summary>
-        /// 現在の Dpi の値を取得します。
+        /// 現在の Dpi の値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -108,11 +105,14 @@ namespace Cube.Forms
         public double Dpi
         {
             get { return _dpi; }
-            private set
+            set
             {
+                System.Diagnostics.Debug.Assert(value > 1.0);
+
                 if (_dpi == value) return;
+                var old = _dpi;
                 _dpi = value;
-                OnDpiChanged(ValueEventArgs.Create(value));
+                OnDpiChanged(ValueChangedEventArgs.Create(old, value));
             }
         }
 
@@ -194,7 +194,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         protected virtual void OnVisibleChanging(CancelEventArgs e)
         {
-            if (Visible != false) AdjustDesktopLocation();
+            if (Visible && !DesignMode) AdjustDesktopLocation();
             VisibleChanging?.Invoke(this, e);
         }
 
@@ -211,7 +211,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event ValueEventHandler<string[]> Received;
+        public event EnumerableEventHandler<string> Received;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -222,7 +222,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnReceived(ValueEventArgs<string[]> e)
+        protected virtual void OnReceived(EnumerableEventArgs<string> e)
             => Received?.Invoke(this, e);
 
         #endregion
@@ -238,7 +238,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event ValueEventHandler<double> DpiChanged;
+        public event ValueChangedEventHandler<double> DpiChanged;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -249,8 +249,12 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnDpiChanged(ValueEventArgs<double> e)
-            => DpiChanged?.Invoke(this, e);
+        protected virtual void OnDpiChanged(ValueChangedEventArgs<double> e)
+        {
+            var need = AutoScaleMode == System.Windows.Forms.AutoScaleMode.Dpi;
+            if (need) this.UpdateForm(e.OldValue, e.NewValue);
+            DpiChanged?.Invoke(this, e);
+        }
 
         #endregion
 
@@ -413,7 +417,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void WhenActivated(string[] args)
+        private void WhenActivated(IEnumerable<string> args)
         {
             if (InvokeRequired) Invoke(new Action(() => WhenActivated(args)));
             else
@@ -426,7 +430,7 @@ namespace Cube.Forms
 
                 Activate();
                 BringToFront();
-                OnReceived(ValueEventArgs.Create(args));
+                OnReceived(EnumerableEventArgs.Create(args));
             }
         }
 
@@ -448,7 +452,8 @@ namespace Cube.Forms
 
         #region Fields
         private double _dpi = 0.0;
-        private Cube.Processes.IMessenger<string[]> _activator = null;
+        private Cube.Processes.IMessenger<IEnumerable<string>> _activator = null;
+        private IDisposable _remover = null;
         #endregion
 
         #endregion

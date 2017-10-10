@@ -47,10 +47,10 @@
       <HintPath>..\..\packages\Cube.Backwards.1.4.0\lib\net35\Cube.Backwards.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.Net35.1.5.0\lib\net35\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.Net35.1.5.1\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Images">
-      <HintPath>..\..\packages\Cube.Images.Net35.1.5.0\lib\net35\Cube.Images.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Images.Net35.1.5.1\lib\net35\Cube.Images.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
@@ -78,7 +78,6 @@
     <Compile Include="Models\FontFactory.cs" />
     <Compile Include="Models\NotifyItem.cs" />
     <Compile Include="Models\NotifyStyle.cs" />
-    <Compile Include="Models\IListViewItemConverter.cs" />
     <Compile Include="Models\OnlyExpandableConverter.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\SizeHacker.cs" />
@@ -97,8 +96,10 @@
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Views\Mocks\MockView.cs" />
     <Compile Include="Views\IControl.cs" />
-    <Compile Include="Views\INotifyView.cs" />
-    <Compile Include="Views\IWebView.cs" />
+    <Compile Include="Views\IDpiAwarable.cs" />
+    <Compile Include="Views\IForm.cs" />
+    <Compile Include="Views\INotifyForm.cs" />
+    <Compile Include="Views\IWebControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Views\Controls\Buttons\Button.cs">
@@ -137,9 +138,6 @@
     <Compile Include="Views\Controls\FeatureControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Views\Controls\ListView.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Views\Controls\PictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -168,7 +166,7 @@
     <Compile Include="Views\Forms\DeviceAwareForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Views\Forms\FormBase.cs">
+    <Compile Include="Views\Forms\StandardForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Views\Forms\NotifyForm.cs">
