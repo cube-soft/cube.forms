@@ -37,8 +37,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\Cube.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
@@ -49,10 +47,10 @@
       <HintPath>..\..\packages\Cube.Backwards.1.4.0\lib\net35\Cube.Backwards.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.Net35.1.5.2\lib\net35\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.Net35.1.6.0\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Images">
-      <HintPath>..\..\packages\Cube.Images.Net35.1.5.2\lib\net35\Cube.Images.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Images.Net35.1.6.0\lib\net35\Cube.Images.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
@@ -136,9 +134,6 @@
     </Compile>
     <Compile Include="Views\Controls\ControlBase.cs">
       <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\Controls\FeatureControl.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Views\Controls\PictureBox.cs">
       <SubType>Component</SubType>

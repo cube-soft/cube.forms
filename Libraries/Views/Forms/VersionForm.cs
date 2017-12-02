@@ -44,9 +44,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public VersionForm()
-            : this(Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly())
-        { }
+        public VersionForm() : this(AssemblyReader.Default) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -55,9 +53,24 @@ namespace Cube.Forms
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public VersionForm(Assembly assembly) : base()
+        public VersionForm(Assembly assembly) : this(new AssemblyReader(assembly)) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VersionForm
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="assembly">アセンブリ情報</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public VersionForm(AssemblyReader assembly) : base()
         {
             InitializeLayout(assembly);
         }
@@ -79,8 +92,8 @@ namespace Cube.Forms
         [Browsable(true)]
         public Image Image
         {
-            get { return _control.Image; }
-            set { _control.Image = value; }
+            get => _control.Image;
+            set => _control.Image = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -95,8 +108,8 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Product
         {
-            get { return _control.Product; }
-            set { _control.Product = value; }
+            get => _control.Product;
+            set => _control.Product = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -111,8 +124,8 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Version
         {
-            get { return _control.Version; }
-            set { _control.Version = value; }
+            get => _control.Version;
+            set => _control.Version = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -127,8 +140,8 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Description
         {
-            get { return _control.Description; }
-            set { _control.Description = value; }
+            get => _control.Description;
+            set => _control.Description = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -143,8 +156,8 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Copyright
         {
-            get { return _control.Copyright; }
-            set { _control.Copyright = value; }
+            get => _control.Copyright;
+            set => _control.Copyright = value;
         }
 
         /* ----------------------------------------------------------------- */
@@ -160,8 +173,8 @@ namespace Cube.Forms
         [Browsable(true)]
         public Uri Uri
         {
-            get { return _control.Uri; }
-            set { _control.Uri = value; }
+            get => _control.Uri;
+            set => _control.Uri = value;
         }
 
         #endregion
@@ -179,8 +192,20 @@ namespace Cube.Forms
         /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(Assembly assembly)
-            => _control.Update(assembly);
+        public void Update(Assembly assembly) => _control.Update(assembly);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// アセンブリ情報を基に表示内容を更新します。
+        /// </summary>
+        /// 
+        /// <param name="assembly">アセンブリ情報</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update(AssemblyReader assembly) => _control.Update(assembly);
 
         #endregion
 
@@ -195,7 +220,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private void InitializeLayout(Assembly assembly)
+        private void InitializeLayout(AssemblyReader assembly)
         {
             Size = new Size(400, 270);
             SuspendLayout();

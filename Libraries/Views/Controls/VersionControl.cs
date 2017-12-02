@@ -43,16 +43,9 @@ namespace Cube.Forms
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
-        /// 
-        /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public VersionControl(Assembly assembly) : base()
-        {
-            Size = new Size(340, 120);
-            InitializeLayout();
-            Update(assembly);
-        }
+        public VersionControl() : this(AssemblyReader.Default) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -61,11 +54,29 @@ namespace Cube.Forms
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
+        /// 
+        /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public VersionControl()
-            : this(Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly())
-        { }
+        public VersionControl(Assembly assembly) : this(new AssemblyReader(assembly)) { }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// VersionControl
+        ///
+        /// <summary>
+        /// オブジェクトを初期化します。
+        /// </summary>
+        /// 
+        /// <param name="assembly">アセンブリ情報</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public VersionControl(AssemblyReader assembly) : base()
+        {
+            Size = new Size(340, 120);
+            InitializeLayout();
+            Update(assembly);
+        }
 
         #endregion
 
@@ -84,7 +95,7 @@ namespace Cube.Forms
         [Browsable(true)]
         public Image Image
         {
-            get { return _image.Image; }
+            get => _image.Image;
             set
             {
                 if (_image.Image == value) return;
@@ -105,7 +116,7 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Product
         {
-            get { return _product.Text; }
+            get => _product.Text;
             set
             {
                 if (_product.Text == value) return;
@@ -125,7 +136,7 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Version
         {
-            get { return _version.Text; }
+            get => _version.Text;
             set
             {
                 if (_version.Text == value) return;
@@ -145,7 +156,7 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Description
         {
-            get { return _others.Text; }
+            get => _others.Text;
             set
             {
                 if (_others.Text == value) return;
@@ -166,7 +177,7 @@ namespace Cube.Forms
         [Browsable(true)]
         public string Copyright
         {
-            get { return _copyright.Text; }
+            get => _copyright.Text;
             set
             {
                 if (_copyright.Text == value) return;
@@ -220,13 +231,26 @@ namespace Cube.Forms
         ///
         /* ----------------------------------------------------------------- */
         public void Update(Assembly assembly)
+            => Update(new AssemblyReader(assembly));
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Update
+        ///
+        /// <summary>
+        /// アセンブリ情報を基に表示内容を更新します。
+        /// </summary>
+        /// 
+        /// <param name="assembly">アセンブリ情報</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Update(AssemblyReader assembly)
         {
             if (assembly == null) return;
-            var reader = new AssemblyReader(assembly);
 
-            Product   = reader.Product;
-            Version   = $"Version {reader.Version.ToString()}";
-            Copyright = reader.Copyright;
+            Product   = assembly.Product;
+            Version   = $"Version {assembly.Version.ToString()}";
+            Copyright = assembly.Copyright;
         }
 
         #endregion
