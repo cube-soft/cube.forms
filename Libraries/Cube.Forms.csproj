@@ -43,14 +43,20 @@
     <Reference Include="AsyncBridge.Net35">
       <HintPath>..\..\packages\AsyncBridge.Net35.0.2.0\lib\net35-Client\AsyncBridge.Net35.dll</HintPath>
     </Reference>
+    <Reference Include="AlphaFS">
+      <HintPath>..\..\packages\AlphaFS.2.1.3\lib\net35\AlphaFS.dll</HintPath>
+    </Reference>
     <Reference Include="Cube.Backwards">
       <HintPath>..\..\packages\Cube.Backwards.1.4.0\lib\net35\Cube.Backwards.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.Net35.1.6.0\lib\net35\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.Net35.1.7.0\lib\net35\Cube.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Cube.FileSystem">
+      <HintPath>..\..\packages\Cube.FileSystem.Net35.1.7.0\lib\net35\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Images">
-      <HintPath>..\..\packages\Cube.Images.Net35.1.6.0\lib\net35\Cube.Images.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Images.Net35.1.7.0\lib\net35\Cube.Images.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\packages\log4net.2.0.8\lib\net35-full\log4net.dll</HintPath>
@@ -81,18 +87,16 @@
     <Compile Include="Models\OnlyExpandableConverter.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\SizeHacker.cs" />
-    <Compile Include="Models\WindowTheme.cs" />
     <Compile Include="NativeMethods\Structures\MinMaxInfo.cs" />
     <Compile Include="NativeMethods\Structures\Point.cs" />
     <Compile Include="NativeMethods\Gdi32.cs" />
     <Compile Include="NativeMethods\UrlMon.cs" />
     <Compile Include="NativeMethods\User32.cs" />
-    <Compile Include="NativeMethods\UxTheme.cs" />
     <Compile Include="Operations\Bindings.cs" />
     <Compile Include="Operations\Controls.cs" />
     <Compile Include="Operations\Graphics.cs" />
+    <Compile Include="Operations\ListView.cs" />
     <Compile Include="Operations\Processes.cs" />
-    <Compile Include="Operations\SelectedIndices.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
     <Compile Include="Views\Mocks\MockView.cs" />
     <Compile Include="Views\IControl.cs" />
@@ -193,11 +197,4 @@
     <None Include="Resources\LogoSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

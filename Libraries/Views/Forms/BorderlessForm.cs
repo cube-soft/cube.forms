@@ -1,7 +1,7 @@
 ﻿/* ------------------------------------------------------------------------- */
 //
 // Copyright (c) 2010 CubeSoft, Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -28,11 +28,11 @@ namespace Cube.Forms
     /* --------------------------------------------------------------------- */
     ///
     /// BorderlessForm
-    /// 
+    ///
     /// <summary>
     /// 枠線やタイトルバーのないフォームを作成するためのクラスです。
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// 既存の Form クラスに対して、タイトルバーや枠線等を全てクライアント
     /// 領域と見なすように修正されています。
@@ -66,12 +66,12 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// MaximizeBox
-        /// 
+        ///
         /// <summary>
         /// 最大化ボタンを有効にするかどうかを示す値を取得または
         /// 設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 変更内容を Caption に反映させるため、元々の MaximizeBox
         /// プロパティを隠ぺいしています。
@@ -94,12 +94,12 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// MinimizeBox
-        /// 
+        ///
         /// <summary>
         /// 最小化ボタンを有効にするかどうかを示す値を取得または
         /// 設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 変更内容を Caption に反映させるため、元々の MinimizeBox
         /// プロパティを隠ぺいしています。
@@ -122,7 +122,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// DropShadow
-        /// 
+        ///
         /// <summary>
         /// フォームの外部に陰影を描画するかどうかを示す値を取得または
         /// 設定します。
@@ -136,7 +136,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// Sizable
-        /// 
+        ///
         /// <summary>
         /// サイズ変更を可能にするかどうかを示す値を取得または設定します。
         /// </summary>
@@ -158,12 +158,12 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// SizeGrip
-        /// 
+        ///
         /// <summary>
         /// サイズを変更するためのグリップ幅を取得または設定します。
         /// このプロパティは Sizable が無効の場合は無視されます。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// フォームの上下左右から指定されたピクセル分の領域をサイズ変更の
         /// ためのグリップとして利用します。
@@ -177,11 +177,11 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// CornerRadius
-        /// 
+        ///
         /// <summary>
         /// 四隅の角の丸みを表す値を取得または設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// TODO: ShowInTaskbar の値を変更した時に Region がリセット
         /// されてしまうので、該当部分の処理を要検討。
@@ -204,12 +204,12 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// SystemMenu
-        /// 
+        ///
         /// <summary>
         /// システムメニューを表示するかどうかを示す値を取得または
         /// 設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// システムメニューの有無は FormBorderStyle の値を変更する事で
         /// 対応します。 SystemMenu を false に設定した場合は、
@@ -236,7 +236,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// Caption
-        /// 
+        ///
         /// <summary>
         /// キャプション（タイトルバー）を表すコントロールを取得または
         /// 設定します。
@@ -261,7 +261,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// CaptionMonitoring
-        /// 
+        ///
         /// <summary>
         /// キャプションから発生するイベントを監視するかどうかを示す値を
         /// 取得または設定します。
@@ -275,18 +275,18 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// CreateParams
-        /// 
+        ///
         /// <summary>
         /// コントロールの作成時に必要な情報をカプセル化します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// いくつかのメソッド (メッセージ) では、カスタマイズされた
         /// 非クライアント領域に関する不都合が存在します。
         /// そこで、CreateParams から一時的に WS_THICKFRAME 等の値を除去
         /// する事によって、この不都合を回避します。
         /// </remarks>
-        /// 
+        ///
         /* ----------------------------------------------------------------- */
         protected override System.Windows.Forms.CreateParams CreateParams
         {
@@ -301,7 +301,7 @@ namespace Cube.Forms
                       | 0x00C00000 // WS_CAPTION
                       | 0x00400000 // WS_DLGFRAME
                       | 0x00040000 // WS_THICKFRAME
-                    );          
+                    );
                 }
                 return cp;
             }
@@ -312,7 +312,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// FormBorderStyle
-        /// 
+        ///
         /// <summary>
         /// 枠線の表示方法を取得または設定します。
         /// </summary>
@@ -337,7 +337,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// OnLoad
-        /// 
+        ///
         /// <summary>
         /// フォームのロード時に実行されます。
         /// </summary>
@@ -352,7 +352,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// OnActivated
-        /// 
+        ///
         /// <summary>
         /// フォームがアクティブ化された時に実行されます。
         /// </summary>
@@ -368,7 +368,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// OnDeactivate
-        /// 
+        ///
         /// <summary>
         /// フォームが非アクティブ化された時に実行されます。
         /// </summary>
@@ -384,11 +384,11 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// OnNcHitTest
-        /// 
+        ///
         /// <summary>
         /// マウスのヒットテスト発生時に実行されます。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// サイズ変更用のマウスカーソルを描画するかどうかを決定します。
         /// </remarks>
@@ -412,11 +412,11 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// OnResize
-        /// 
+        ///
         /// <summary>
         /// リサイズ時に実行されます。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// サイズ変更用のマウスカーソルを描画するかどうかを決定します。
         /// </remarks>
@@ -435,7 +435,7 @@ namespace Cube.Forms
         /// <summary>
         /// コントロールのクライアント領域のサイズを設定します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// 処理内容の詳細については、CreateParams の remarks を参照下さい。
         /// </remarks>
@@ -457,7 +457,7 @@ namespace Cube.Forms
         /// <summary>
         /// ウィンドウメッセージを処理します。
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// TODO: WM_CREATE (0x0001) および WM_NCCREATE (0x0081) で
         /// 設定されているサイズは、デザイナ (InitializeComponents) 等で
@@ -713,7 +713,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         ///
         /// IsCaption
-        /// 
+        ///
         /// <summary>
         /// Position.Caption を表す領域かどうかを判別します。
         /// </summary>
@@ -794,10 +794,12 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private Region CreateNewRegion()
-            => Region.FromHrgn(Gdi32.NativeMethods.CreateRoundRectRgn(
+        private Region CreateNewRegion() =>
+            Region.FromHrgn(Gdi32.NativeMethods.CreateRoundRectRgn(
                 0, 0, Width, Height, CornerRadius, CornerRadius
             ));
+
+        #endregion
 
         #endregion
 
@@ -806,8 +808,6 @@ namespace Cube.Forms
         private bool _fakeMode = false;
         private int _cornerRadius = 0;
         private CaptionControl _caption = null;
-        #endregion
-
         #endregion
     }
 }
