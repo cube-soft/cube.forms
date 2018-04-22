@@ -15,10 +15,10 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using Cube.Log;
+using System;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Cube.Forms
 {
@@ -33,21 +33,6 @@ namespace Cube.Forms
     /* --------------------------------------------------------------------- */
     public class DeviceAwareForm : StandardForm
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DeviceAwareForm
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public DeviceAwareForm() : base() { }
-
-        #endregion
-
         #region Events
 
         #region Attached
@@ -119,14 +104,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         protected override void WndProc(ref Message m)
         {
-            switch (m.Msg)
-            {
-                case 0x0219: // WM_DEVICECHANGE
-                    RaiseDeviceChangeEvent(m);
-                    break;
-                default:
-                    break;
-            }
+            if (m.Msg == 0x0219) RaiseDeviceChangeEvent(m); // WM_DEVICECHANGE
             base.WndProc(ref m);
         }
 
@@ -182,10 +160,11 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         private char ToDriveLetter(uint unitmask)
         {
+            var f = unitmask;
             for (char offset = (char)0; offset < 26; ++offset)
             {
-                if ((unitmask & 0x1) != 0) return (char)('A' + offset);
-                unitmask = unitmask >> 1;
+                if ((f & 0x1) != 0) return (char)('A' + offset);
+                f >>= 1;
             }
             return 'A';
         }

@@ -151,7 +151,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public int Count => _inner.Values.Aggregate(0, (n, q) => n += q.Count);
+        public int Count => _inner.Values.Aggregate(0, (n, q) => n + q.Count);
 
         #endregion
 
@@ -223,18 +223,9 @@ namespace Cube.Forms
         {
             if (_inner.Count <= 0) return null;
 
-            var dest = default(NotifyItem);
-
-            lock (_lock)
-            {
-                var pair = _inner.First();
-                dest = pair.Value.Dequeue();
-                if (pair.Value.Count <= 0) _inner.Remove(pair.Key);
-            }
-
+            var dest = DequeueCore();
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(
                 NotifyCollectionChangedAction.Remove, dest));
-
             return dest;
         }
 
@@ -282,9 +273,13 @@ namespace Cube.Forms
         public void Clear(NotifyPriority priority)
         {
             var result = false;
-            lock (_lock) _inner.Remove(priority);
-            if (result) OnCollectionChanged(new NotifyCollectionChangedEventArgs(
-                NotifyCollectionChangedAction.Reset));
+            lock (_lock) result = _inner.Remove(priority);
+            if (result)
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(
+                    NotifyCollectionChangedAction.Reset)
+                );
+            }
         }
 
         /* --------------------------------------------------------------------- */
@@ -322,9 +317,33 @@ namespace Cube.Forms
 
         #endregion
 
+        #region Implementations
+
+        /* --------------------------------------------------------------------- */
+        ///
+        /// DequeueCore
+        ///
+        /// <summary>
+        /// 先頭のオブジェクトを取得します。
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        private NotifyItem DequeueCore()
+        {
+            lock (_lock)
+            {
+                var pair = _inner.First();
+                var dest = pair.Value.Dequeue();
+                if (pair.Value.Count <= 0) _inner.Remove(pair.Key);
+                return dest;
+            }
+        }
+
+        #endregion
+
         #region Fields
-        private object _lock = new object();
-        private SortedDictionary<NotifyPriority, Queue<NotifyItem>> _inner =
+        private readonly object _lock = new object();
+        private readonly SortedDictionary<NotifyPriority, Queue<NotifyItem>> _inner =
             new SortedDictionary<NotifyPriority, Queue<NotifyItem>>(
               new GenericComparer<NotifyPriority>((x, y) => y.CompareTo(x))
             );
