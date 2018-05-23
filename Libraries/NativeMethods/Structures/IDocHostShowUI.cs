@@ -15,50 +15,63 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Collections.Generic;
-using System.Linq;
+using System;
+using System.Runtime.InteropServices;
 
-namespace Cube.Forms.Controls
+namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ListViewOperator
+    /// IDocHostShowUI
     ///
     /// <summary>
-    /// System.Windows.Forms.ListView の拡張メソッド用クラスです。
+    /// https://msdn.microsoft.com/en-us/library/aa753269.aspx
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class ListViewOperator
+    [ComImport,
+     Guid("C4D244B0-D43E-11CF-893B-00AA00BDCE1A"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IDocHostShowUI
     {
-        #region Methods
-
         /* ----------------------------------------------------------------- */
         ///
-        /// Ascend
+        /// ShowMessage
         ///
         /// <summary>
-        /// 昇順にソートします。
+        /// メッセージを表示します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<int> Ascend(
-            this System.Windows.Forms.ListView.SelectedIndexCollection indices) =>
-            indices.Cast<int>().OrderBy(x => x);
+        [return: MarshalAs(UnmanagedType.U4)]
+        [PreserveSig]
+        int ShowMessage(IntPtr hwnd,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpstrText,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpstrCaption,
+            int dwType,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpstrHelpFile,
+            int dwHelpContext,
+            out int lpResult
+        );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Descend
+        /// ShowHelp
         ///
         /// <summary>
-        /// 降順にソートします。
+        /// ヘルプを表示します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<int> Descend(
-            this System.Windows.Forms.ListView.SelectedIndexCollection indices) =>
-            indices.Cast<int>().OrderByDescending(x => x);
-
-        #endregion
+        [return: MarshalAs(UnmanagedType.U4)]
+        [PreserveSig]
+        int ShowHelp(
+            IntPtr hwnd,
+            [MarshalAs(UnmanagedType.LPWStr)] string pszHelpFile,
+            int uCommand,
+            int dwData,
+            IntPtr ptMouse, // POINT
+            [MarshalAs(UnmanagedType.IDispatch)] object pDispatchObjectHit
+        );
     }
 }

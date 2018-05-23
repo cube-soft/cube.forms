@@ -22,84 +22,44 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MessageEventArgs
+    /// TaskbarProgress
     ///
     /// <summary>
-    /// メッセージボックスに表示する情報を保持するためのクラスです。
+    /// タスクバー上に進捗状況を表示するためのクラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class MessageEventArgs : EventArgs
+    public class TaskbarProgress : ObservableProperty
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MessageEventArgs
+        /// TaskbarProgress
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="message">メッセージ内容</param>
+        /// <param name="window">ウィンドウ・オブジェクト</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageEventArgs(string message) :
-            this(message, AssemblyReader.Default.Title) { }
+        public TaskbarProgress(IWin32Window window) : this(window.Handle) { }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// MessageEventArgs
+        /// TaskbarProgress
         ///
         /// <summary>
         /// オブジェクトを初期化します。
         /// </summary>
         ///
-        /// <param name="message">メッセージ内容</param>
-        /// <param name="title">メッセージボックスのタイトル</param>
+        /// <param name="handle">ウィンドウ・ハンドル</param>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageEventArgs(string message, string title) :
-            this(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// MessageEventArgs
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="message">メッセージ内容</param>
-        /// <param name="buttons">表示ボタン</param>
-        /// <param name="icon">表示アイコン</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public MessageEventArgs(string message,
-            MessageBoxButtons buttons, MessageBoxIcon icon) :
-            this(message, AssemblyReader.Default.Title, buttons, icon) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// MessageEventArgs
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="message">メッセージ内容</param>
-        /// <param name="title">メッセージボックスのタイトル</param>
-        /// <param name="buttons">表示ボタン</param>
-        /// <param name="icon">表示アイコン</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public MessageEventArgs(string message, string title,
-            MessageBoxButtons buttons, MessageBoxIcon icon)
+        public TaskbarProgress(IntPtr handle)
         {
-            Message = message;
-            Title   = title;
-            Buttons = buttons;
-            Icon    = icon;
+            _handle = handle;
         }
 
         #endregion
@@ -108,71 +68,135 @@ namespace Cube.Forms
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Title
+        /// State
         ///
         /// <summary>
-        /// メッセージボックスのタイトルを取得または設定します。
+        /// 表示状態を示す値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Title { get; }
+        public TaskbarProgressState State
+        {
+            get => _state;
+            set
+            {
+                if (SetProperty(ref _state, value)) Refresh();
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Message
+        /// Value
         ///
         /// <summary>
-        /// メッセージを取得または設定します。
+        /// 進捗状況を示す値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public string Message { get; }
+        public int Value
+        {
+            get => _value;
+            set
+            {
+                if (SetProperty(ref _value, value)) Refresh();
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Icon
+        /// Maximum
         ///
         /// <summary>
-        /// メッセージボックスに表示するアイコンを取得または設定します。
+        /// 進捗状況の最大値を取得または設定します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBoxIcon Icon { get; }
+        public int Maximum
+        {
+            get => _maximum;
+            set
+            {
+                if (SetProperty(ref _maximum, value)) Refresh();
+            }
+        }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Buttons
+        /// IsSupported
         ///
         /// <summary>
-        /// メッセージボックスに表示するボタンを取得または設定します。
+        /// 実行環境でサポートされているかどうかを示す値を取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public MessageBoxButtons Buttons { get; }
+        public bool IsSupported { get; } = Environment.OSVersion.Version >= new Version(6, 1);
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Result
+        /// Core
         ///
         /// <summary>
-        /// 実行結果を示す値を取得または設定します。
+        /// コアオブジェクトを取得します。
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public DialogResult Result { get; set; }
+        private ITaskbarList3 Core => _core ?? (
+            _core = (ITaskbarList3)(new TaskbarListInstance())
+        );
 
+        #endregion
+
+        #region Methods
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Refresh
+        ///
+        /// <summary>
+        /// 進捗状況を更新します。
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public void Refresh()
+        {
+            if (!IsSupported) return;
+
+            var cvt = Math.Min(Value, Maximum);
+            Core.SetProgressValue(_handle, (ulong)cvt, (ulong)Maximum);
+            Core.SetProgressState(_handle, State);
+        }
+
+        #endregion
+
+        #region Fields
+        private readonly IntPtr _handle;
+        private ITaskbarList3 _core;
+        private TaskbarProgressState _state = TaskbarProgressState.None;
+        private int _value = 0;
+        private int _maximum = 100;
         #endregion
     }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// MessageEventHandler
+    /// TaskbarProgressState
     ///
     /// <summary>
-    /// メッセージボックスを表示するための delegate です。
+    /// 進捗状況の表示状態を示す列挙型です。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [Serializable]
-    public delegate void MessageEventHandler(object sender, MessageEventArgs e);
+    public enum TaskbarProgressState
+    {
+        /// <summary>進捗表示なし</summary>
+        None = 0,
+        /// <summary>進捗割合は不明</summary>
+        Indeterminate = 0x1,
+        /// <summary>正常</summary>
+        Normal = 0x2,
+        /// <summary>エラー</summary>
+        Error = 0x4,
+        /// <summary>中断</summary>
+        Paused = 0x8
+    }
 }

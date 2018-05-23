@@ -47,13 +47,13 @@
       <HintPath>..\..\packages\Cube.Backwards.1.4.1\lib\net35\Cube.Backwards.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Core">
-      <HintPath>..\..\packages\Cube.Core.1.8.1\lib\net35\Cube.Core.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Core.1.9.0\lib\net35\Cube.Core.dll</HintPath>
     </Reference>
     <Reference Include="Cube.FileSystem">
-      <HintPath>..\..\packages\Cube.FileSystem.1.8.1\lib\net35\Cube.FileSystem.dll</HintPath>
+      <HintPath>..\..\packages\Cube.FileSystem.1.9.0\lib\net35\Cube.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="Cube.Images">
-      <HintPath>..\..\packages\Cube.Images.1.8.1\lib\net35\Cube.Images.dll</HintPath>
+      <HintPath>..\..\packages\Cube.Images.1.9.0\lib\net35\Cube.Images.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading">
       <HintPath>..\..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
@@ -73,7 +73,14 @@
     <Compile Include="Behaviors\PasswordBehavior.cs" />
     <Compile Include="Events\DeviceEventArgs.cs" />
     <Compile Include="Events\MessageEventArgs.cs" />
+    <Compile Include="Events\OverwriteEventArgs.cs" />
     <Compile Include="Events\NavigatingEventArgs.cs" />
+    <Compile Include="Extensions\Bindings.cs" />
+    <Compile Include="Extensions\Controls.cs" />
+    <Compile Include="Extensions\Graphics.cs" />
+    <Compile Include="Extensions\Images.cs" />
+    <Compile Include="Extensions\ListView.cs" />
+    <Compile Include="Extensions\Processes.cs" />
     <Compile Include="Models\ButtonPainter.cs" />
     <Compile Include="Models\ButtonStyle.cs" />
     <Compile Include="Models\FontFactory.cs" />
@@ -82,17 +89,16 @@
     <Compile Include="Models\OnlyExpandableConverter.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\SizeHacker.cs" />
+    <Compile Include="NativeMethods\Structures\DWebBrowserEvents2.cs" />
+    <Compile Include="NativeMethods\Structures\IDocHostShowUI.cs" />
+    <Compile Include="NativeMethods\Structures\ITaskbarList.cs" />
     <Compile Include="NativeMethods\Structures\MinMaxInfo.cs" />
     <Compile Include="NativeMethods\Structures\Point.cs" />
     <Compile Include="NativeMethods\Gdi32.cs" />
     <Compile Include="NativeMethods\UrlMon.cs" />
     <Compile Include="NativeMethods\User32.cs" />
-    <Compile Include="Operations\Bindings.cs" />
-    <Compile Include="Operations\Controls.cs" />
-    <Compile Include="Operations\Graphics.cs" />
-    <Compile Include="Operations\ListView.cs" />
-    <Compile Include="Operations\Processes.cs" />
     <Compile Include="Presenters\PresenterBase.cs" />
+    <Compile Include="Views\Controls\TaskbarProgress.cs" />
     <Compile Include="Views\Mocks\MockView.cs" />
     <Compile Include="Views\IControl.cs" />
     <Compile Include="Views\IDpiAwarable.cs" />
@@ -152,7 +158,11 @@
     <Compile Include="Views\Controls\WebControl.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Views\Controls\WebControl.Subclass.cs">
+    <Compile Include="Views\Controls\WebControl.ActiveXControlEvents.cs">
+      <DependentUpon>WebControl.cs</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Views\Controls\WebControl.ShowUIWebBrowserSite.cs">
       <DependentUpon>WebControl.cs</DependentUpon>
       <SubType>Component</SubType>
     </Compile>

@@ -15,22 +15,22 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Threading;
 using System.Collections.Specialized;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Cube.Forms.Bindings
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// BindingOperator
+    /// BindingExtension
     ///
     /// <summary>
-    /// Binding 関連の拡張メソッド用クラスです。
+    /// Binding 関連の拡張用クラスです。
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class BindingOperator
+    public static class BindingExtension
     {
         #region Methods
 
@@ -75,9 +75,8 @@ namespace Cube.Forms.Bindings
         public static BindingSource ToBindingSource(this INotifyCollectionChanged src,
             SynchronizationContext ctx)
         {
-            var dest = new BindingSource();
-            dest.DataSource = src;
-            src.CollectionChanged += (s, e) => ctx.Post(_ => dest.ResetBindings(false), null);
+            var dest = new BindingSource { DataSource = src };
+            src.CollectionChanged += (s, e) => ctx.Send(_ => dest.ResetBindings(false), null);
             return dest;
         }
 
