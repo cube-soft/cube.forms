@@ -44,7 +44,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public VersionForm() : this(AssemblyReader.Default) { }
+        public VersionForm() : this(Assembly.GetExecutingAssembly()) { }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -57,23 +57,10 @@ namespace Cube.Forms
         /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public VersionForm(Assembly assembly) : this(new AssemblyReader(assembly)) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// VersionForm
-        ///
-        /// <summary>
-        /// オブジェクトを初期化します。
-        /// </summary>
-        ///
-        /// <param name="assembly">アセンブリ情報</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public VersionForm(AssemblyReader assembly)
+        public VersionForm(Assembly assembly)
         {
             _control = new VersionControl(assembly);
-            InitializeLayout(assembly);
+            InitializeLayout(assembly.GetReader());
         }
 
         #endregion
@@ -193,20 +180,7 @@ namespace Cube.Forms
         /// <param name="assembly">アセンブリ情報</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Update(Assembly assembly) => _control.Update(assembly);
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Update
-        ///
-        /// <summary>
-        /// アセンブリ情報を基に表示内容を更新します。
-        /// </summary>
-        ///
-        /// <param name="assembly">アセンブリ情報</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public void Update(AssemblyReader assembly) => _control.Update(assembly);
+        public void Update(Assembly assembly) => _control.Update(assembly.GetReader());
 
         #endregion
 
