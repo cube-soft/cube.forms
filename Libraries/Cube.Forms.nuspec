@@ -2,12 +2,12 @@
 <package >
     <metadata>
         <id>Cube.Forms</id>
-        <version>1.12.0</version>
+        <version>1.13.0</version>
         <title>Cube.Forms</title>
         <authors>CubeSoft</authors>
         <owners>CubeSoft</owners>
-        <copyright>Copyright (c) 2010 CubeSoft, Inc.</copyright>
-        <description>WinForms based GUI library for CubeSoft applications.</description>
+        <copyright>Copyright © 2010 CubeSoft, Inc.</copyright>
+        <description>WinForms based GUI library.</description>
         <tags>Cube Forms</tags>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <projectUrl>https://github.com/cube-soft/Cube.Forms</projectUrl>
@@ -15,14 +15,14 @@
         <iconUrl>https://github.com/cube-soft/Cube.Forms/blob/master/Icon.png?raw=true</iconUrl>
         <dependencies>
             <group targetFramework="net45">
-                <dependency id="Cube.Core" version="1.12.0" />
-                <dependency id="Cube.FileSystem" version="1.12.0" />
-                <dependency id="Cube.Images" version="1.12.0" />
+                <dependency id="Cube.Core" version="1.13.0" />
+                <dependency id="Cube.FileSystem" version="1.13.0" />
+                <dependency id="Cube.Images" version="1.13.0" />
             </group>
             <group targetFramework="net35">
-                <dependency id="Cube.Core" version="1.12.0" />
-                <dependency id="Cube.FileSystem" version="1.12.0" />
-                <dependency id="Cube.Images" version="1.12.0" />
+                <dependency id="Cube.Core" version="1.13.0" />
+                <dependency id="Cube.FileSystem" version="1.13.0" />
+                <dependency id="Cube.Images" version="1.13.0" />
                 <dependency id="AsyncBridge" version="0.3.1" />
                 <dependency id="Cube.Backwards" version="1.5.0" />
                 <dependency id="TaskParallelLibrary" version="1.0.2856.0" />
