@@ -1,52 +1,77 @@
+# --------------------------------------------------------------------------- #
+#
+# Copyright (c) 2010 CubeSoft, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# --------------------------------------------------------------------------- #
 require 'rake'
 require 'rake/clean'
 
 # --------------------------------------------------------------------------- #
-# Configuration
+# configuration
 # --------------------------------------------------------------------------- #
-SOLUTION    = 'Cube.Forms'
-BRANCHES    = [ 'stable', 'net35' ]
+PROJECT     = 'Cube.Forms'
+LIBRARY     = '../packages'
+BRANCHES    = ['stable', 'net35']
+PACKAGES    = ["Libraries/#{PROJECT}.nuspec"]
 
 # --------------------------------------------------------------------------- #
-# Commands
+# commands
 # --------------------------------------------------------------------------- #
-COPY        = 'cp -pf'
-CHECKOUT    = 'git checkout'
-BUILD       = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
-RESTORE     = 'nuget restore'
-PACK        = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
+BUILD = 'msbuild /t:Clean,Build /m /verbosity:minimal /p:Configuration=Release;Platform="Any CPU";GeneratePackageOnBuild=false'
+PACK  = 'nuget pack -Properties "Configuration=Release;Platform=AnyCPU"'
 
 # --------------------------------------------------------------------------- #
-# Tasks
+# clean
 # --------------------------------------------------------------------------- #
-task :default do
-    Rake::Task[:clean].execute
-    Rake::Task[:build].execute
-    Rake::Task[:pack].execute
-end
+CLEAN.include("#{PROJECT}.*.nupkg")
+CLEAN.include("../packages/cube.*")
+CLEAN.include(%w{bin obj}.map{ |e| "**/#{e}" })
 
 # --------------------------------------------------------------------------- #
-# Build
+# default
 # --------------------------------------------------------------------------- #
-task :build do
-    BRANCHES.each do |branch|
-        sh("#{CHECKOUT} #{branch}")
-        sh("#{RESTORE} #{SOLUTION}.sln")
-        sh("#{BUILD} #{SOLUTION}.sln")
-    end
-end
+desc "Build the solution and create NuGet packages."
+task :default => [:clean_build, :pack]
 
 # --------------------------------------------------------------------------- #
-# Pack
+# pack
 # --------------------------------------------------------------------------- #
+desc "Create NuGet packages in the net35 branch."
 task :pack do
-    sh("#{CHECKOUT} net35")
-    sh("#{PACK} Libraries/#{SOLUTION}.nuspec")
-    sh("#{CHECKOUT} master")
+    sh("git checkout net35")
+    PACKAGES.each { |e| sh("#{PACK} #{e}") }
+    sh("git checkout master")
 end
 
 # --------------------------------------------------------------------------- #
-# Clean
+# clean_build
 # --------------------------------------------------------------------------- #
-CLEAN.include("#{SOLUTION}.*.nupkg")
-CLEAN.include(%w{dll log}.map{ |e| "**/*.#{e}" })
+desc "Clean objects and build the solution in pre-defined branches."
+task :clean_build => [:clean] do
+    BRANCHES.each { |e|
+        sh("git checkout #{e}")
+        rm_rf("#{LIBRARY}/cube.*")
+        Rake::Task[:build].execute
+    }
+end
+
+# --------------------------------------------------------------------------- #
+# build
+# --------------------------------------------------------------------------- #
+desc "Build the solution in the current branch."
+task :build do
+    sh("nuget restore #{PROJECT}.sln")
+    sh("#{BUILD} #{PROJECT}.sln")
+end
