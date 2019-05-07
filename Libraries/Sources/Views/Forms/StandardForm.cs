@@ -16,7 +16,7 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Forms.Controls;
-using Cube.Log;
+using Cube.Mixin.Logger;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -113,7 +113,7 @@ namespace Cube.Forms
                 if (_dpi == value) return;
                 var old = _dpi;
                 _dpi = value;
-                OnDpiChanged(ValueChangedEventArgs.Create(old, value));
+                OnDpiChanged(ValueEventArgs.Create(old, value));
             }
         }
 
@@ -188,7 +188,7 @@ namespace Cube.Forms
         /* ----------------------------------------------------------------- */
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string ProductPlatform => AssemblyReader.Platform;
+        public string ProductPlatform => IntPtr.Size == 4 ? "x86" : "x64";
 
         #endregion
 
@@ -235,7 +235,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public event EnumerableEventHandler<string> Received;
+        public event CollectionEventHandler<string> Received;
 
         /* ----------------------------------------------------------------- */
         ///
@@ -246,7 +246,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnReceived(EnumerableEventArgs<string> e) =>
+        protected virtual void OnReceived(CollectionEventArgs<string> e) =>
             Received?.Invoke(this, e);
 
         #endregion
@@ -480,7 +480,7 @@ namespace Cube.Forms
 
                 Activate();
                 BringToFront();
-                OnReceived(EnumerableEventArgs.Create(args));
+                OnReceived(CollectionEventArgs.Create(args));
             }
         }
 

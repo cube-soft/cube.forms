@@ -16,8 +16,8 @@
 //
 /* ------------------------------------------------------------------------- */
 using Cube.Forms.Controls;
-using Cube.Generics;
-using Cube.Log;
+using Cube.Mixin.Logger;
+using Cube.Mixin.String;
 using System;
 using System.ComponentModel;
 using System.Text;
@@ -110,7 +110,7 @@ namespace Cube.Forms
                 if (_dpi == value) return;
                 var old = _dpi;
                 _dpi = value;
-                OnDpiChanged(ValueChangedEventArgs.Create(old, value));
+                OnDpiChanged(ValueEventArgs.Create(old, value));
             }
         }
 
