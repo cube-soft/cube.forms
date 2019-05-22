@@ -17,42 +17,14 @@
 /* ------------------------------------------------------------------------- */
 namespace Cube.Forms
 {
-    #region IDpiAwarable
-
     /* --------------------------------------------------------------------- */
     ///
-    /// IDpiAwarable
+    /// QueryEventHandler
     ///
     /// <summary>
-    /// Represents an interface that a window or control can be aware of
-    /// DPI changing.
+    /// Represents the event handler with a QueryMessage(T, U) object.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public interface IDpiAwarable
-    {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Dpi
-        ///
-        /// <summary>
-        /// Gets or sets the current DPI.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        double Dpi { get; set; }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// DpiChanged
-        ///
-        /// <summary>
-        /// Occurs when the current DPI is changed.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        event ValueChangedEventHandler<double> DpiChanged;
-    }
-
-    #endregion
+    public delegate void QueryEventHandler<T, U>(object sender, QueryMessage<T, U> e);
 }

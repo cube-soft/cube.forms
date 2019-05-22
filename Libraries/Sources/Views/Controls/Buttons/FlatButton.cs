@@ -382,7 +382,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnNcHitTest(QueryEventArgs<Point, Position> e) =>
+        protected virtual void OnNcHitTest(QueryMessage<Point, Position> e) =>
             NcHitTest?.Invoke(this, e);
 
         #endregion
@@ -391,7 +391,7 @@ namespace Cube.Forms
 
         #region Fields
         private readonly ButtonPainter _painter;
-        private double _dpi = StandardForm.BaseDpi;
+        private double _dpi = Window.BaseDpi;
         #endregion
     }
 }

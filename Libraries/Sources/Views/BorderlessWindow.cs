@@ -26,7 +26,7 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// BorderlessForm
+    /// BorderlessWindow
     ///
     /// <summary>
     /// 枠線やタイトルバーのないフォームを作成するためのクラスです。
@@ -38,7 +38,7 @@ namespace Cube.Forms
     /// </remarks>
     ///
     /* --------------------------------------------------------------------- */
-    public class BorderlessForm : StandardForm, IBorderlessForm
+    public class BorderlessWindow : Window, IBorderlessForm
     {
         #region Constructors
 
@@ -51,7 +51,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public BorderlessForm()
+        public BorderlessWindow()
         {
             SystemEvents.DisplaySettingsChanged += (s, e) => UpdateMaximumSize();
             SystemEvents.UserPreferenceChanged  += (s, e) => UpdateMaximumSize();
@@ -392,7 +392,7 @@ namespace Cube.Forms
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void OnNcHitTest(QueryEventArgs<Point, Position> e)
+        protected override void OnNcHitTest(QueryMessage<Point, Position> e)
         {
             base.OnNcHitTest(e);
             if (!e.Cancel) return;
@@ -401,9 +401,9 @@ namespace Cube.Forms
             var others = result == Position.NoWhere || result == Position.Client;
             if (others && IsCaption(e.Query)) result = Position.Caption;
 
-            e.Result = result;
-            e.Cancel = e.Result == Position.Caption ? false :
-                       e.Result == Position.NoWhere ? true :
+            e.Value  = result;
+            e.Cancel = e.Value == Position.Caption ? false :
+                       e.Value == Position.NoWhere ? true :
                        WindowState != System.Windows.Forms.FormWindowState.Normal;
         }
 

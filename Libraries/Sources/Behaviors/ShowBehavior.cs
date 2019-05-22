@@ -15,123 +15,101 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.String;
-using System.Linq;
-using System.Windows.Forms;
-
 namespace Cube.Forms.Behaviors
 {
-    #region OpenFileDialogBehavior
+    #region ShowBehavior
 
     /* --------------------------------------------------------------------- */
     ///
-    /// OpenFileDialogBehavior
+    /// ShowBehavior
     ///
     /// <summary>
-    /// Pvovides functionality to show a open-file dialog.
+    /// Provides functionality to show a window.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class OpenFileDialogBehavior : SubscribeBehavior<OpenFileMessage>
+    public class ShowBehavior<TView, TViewModel> : SubscribeBehavior<TViewModel>
+        where TView : WindowBase, new()
+        where TViewModel : IPresentable
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// OpenFileDialogBehavior
+        /// ShowBehavior
         ///
         /// <summary>
-        /// Initializes a new instance of the OpenFileDialogBehavior class
-        /// with the specified presentable object.
+        /// Initializes a new instance of the ShowBehavior class with the
+        /// specified arguments.
         /// </summary>
         ///
         /// <param name="src">Presentable object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public OpenFileDialogBehavior(IPresentable src) :base (src) { }
+        public ShowBehavior(IPresentable src) : base(src) { }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Invoke
         ///
         /// <summary>
-        /// Shows a open-file dialog.
+        /// Shows a new window with the specified viewmodel.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Invoke(OpenFileMessage e)
+        protected override void Invoke(TViewModel e)
         {
-            var dialog = new OpenFileDialog
-            {
-                CheckPathExists = e.CheckPathExists,
-                Multiselect     = e.Multiselect,
-                FilterIndex     = e.FilterIndex,
-            };
-
-            if (e.Title.HasValue()) dialog.Title = e.Title;
-            if (e.Value.Any()) dialog.FileName = e.Value.First();
-            if (e.Filter.HasValue()) dialog.Filter = e.Filter;
-            if (e.InitialDirectory.HasValue()) dialog.InitialDirectory = e.InitialDirectory;
-
-            var ok = dialog.ShowDialog() == DialogResult.OK;
-            e.Cancel = !ok;
-            if (ok) e.Value = dialog.FileNames;
+            var view = new TView();
+            view.Bind(e);
+            view.Show();
         }
     }
 
     #endregion
 
-    #region SaveFileDialogBehavior
+    #region ShowDialogBehavior
 
     /* --------------------------------------------------------------------- */
     ///
-    /// SaveFileDialogBehavior
+    /// ShowDialogBehavior
     ///
     /// <summary>
-    /// Pvovides functionality to show a save-file dialog.
+    /// Provides functionality to show a window as a modal dialog.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class SaveFileDialogBehavior : SubscribeBehavior<SaveFileMessage>
+    public class ShowDialogBehavior<TView, TViewModel> : SubscribeBehavior<TViewModel>
+        where TView : WindowBase, new()
+        where TViewModel : IPresentable
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// SaveFileDialogBehavior
+        /// ShowDialogBehavior
         ///
         /// <summary>
-        /// Initializes a new instance of the SaveFileDialogBehavior class
-        /// with the specified presentable object.
+        /// Initializes a new instance of the ShowDialogBehavior class
+        /// with the specified arguments.
         /// </summary>
         ///
         /// <param name="src">Presentable object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SaveFileDialogBehavior(IPresentable src) : base(src) { }
+        public ShowDialogBehavior(IPresentable src) : base(src) { }
 
         /* ----------------------------------------------------------------- */
         ///
         /// Invoke
         ///
         /// <summary>
-        /// Shows a save-file dialog.
+        /// Shows a new window with the specified viewmodel.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Invoke(SaveFileMessage e)
+        protected override void Invoke(TViewModel e)
         {
-            var dialog = new SaveFileDialog
+            using(var view = new TView())
             {
-                CheckPathExists = e.CheckPathExists,
-                OverwritePrompt = e.OverwritePrompt,
-                FilterIndex     = e.FilterIndex,
-            };
-
-            if (e.Title.HasValue()) dialog.Title = e.Title;
-            if (e.Value.HasValue()) dialog.FileName = e.Value;
-            if (e.Filter.HasValue()) dialog.Filter = e.Filter;
-            if (e.InitialDirectory.HasValue()) dialog.InitialDirectory = e.InitialDirectory;
-
-            var ok = dialog.ShowDialog() == DialogResult.OK;
-            e.Cancel = !ok;
-            if (ok) e.Value = dialog.FileName;
+                view.Bind(e);
+                view.ShowDialog();
+            }
         }
     }
 
