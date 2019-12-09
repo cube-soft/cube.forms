@@ -78,7 +78,7 @@ namespace Cube.Forms
                 var e  = new MessageEventArgs(text, caption, mb, mi);
                 Host.OnMessageShowing(e);
                 result = (int)e.Result;
-                return (e.Result != DialogResult.None) ? 1 : 0;
+                return (e.Result != DialogResult.None) ? 0 : 1;
             }
 
             /* ------------------------------------------------------------- */
