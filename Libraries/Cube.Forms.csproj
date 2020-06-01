@@ -9,7 +9,7 @@
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/cube-soft/$(AssemblyName)</PackageProjectUrl>
         <PackageIcon>images\Icon.png</PackageIcon>
-        <TargetFramework>net45</TargetFramework>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
         <UseWindowsForms>true</UseWindowsForms>
         <LangVersion>latest</LangVersion>
         <Optimize>true</Optimize>
