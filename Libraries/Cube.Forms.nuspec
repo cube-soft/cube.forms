@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package >
     <metadata>
-        <version>2.0.1</version>
+        <version>1.15.10</version>
         <id>Cube.Forms</id>
         <title>Cube.Forms</title>
         <authors>clown,cube-soft</authors>
@@ -15,13 +15,10 @@
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <dependencies>
             <group targetFramework="net45">
-                <dependency id="Cube.Core" version="2.0.1" />
+                <dependency id="Cube.FileSystem" version="1.15.10" />
             </group>
             <group targetFramework="net35">
-                <dependency id="Cube.Core" version="2.0.1" />
-            </group>
-            <group targetFramework="netcoreapp3.0">
-                <dependency id="Cube.Core" version="2.0.1" />
+                <dependency id="Cube.FileSystem" version="1.15.10" />
             </group>
         </dependencies>
     </metadata>
@@ -29,6 +26,5 @@
         <file src="..\Icon.png" target="images" />
         <file src="bin\Any CPU\Release\net45\Cube.Forms.*" target="lib\net45" />
         <file src="bin\Any CPU\Release\net35\Cube.Forms.*" target="lib\net35" />
-        <file src="bin\Any CPU\Release\netcoreapp3.0\Cube.Forms.*" target="lib\netcoreapp3.0" />
     </files>
 </package>
