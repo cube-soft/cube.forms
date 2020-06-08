@@ -1,18 +1,19 @@
-version: 1.15.1.{build}
-image: Visual Studio 2019 Preview
-platform: Any CPU
-configuration: Release
+version: 1.15.10.{build}
 environment:
     PROJECT_NAME: 'Cube.Forms'
+clone_folder: 'C:\Cube\%PROJECT_NAME%'
+image: Visual Studio 2019
+platform: Any CPU
+configuration: Release
+skip_tags: true
 branches:
     only:
         - master
-skip_tags: true
 nuget:
     project_feed: true
     disable_publish_on_pr: true
-clone_folder: 'C:\Cube\%PROJECT_NAME%'
 before_build:
+    - nuget sources add -name Cube.Core -source https://ci.appveyor.com/nuget/cube.core
     - nuget restore "%PROJECT_NAME%.sln"
 build:
     project: '%PROJECT_NAME%.sln'
