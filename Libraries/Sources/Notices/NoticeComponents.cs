@@ -19,27 +19,22 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// IBinder
+    /// NoticeComponents
     ///
     /// <summary>
-    /// Represents the interface that a window can be bindable with a
-    /// presentable object.
+    /// Specifies the component of the notice window.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public interface IBinder
+    public enum NoticeComponents
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Bind
-        ///
-        /// <summary>
-        /// Binds the specified object.
-        /// </summary>
-        ///
-        /// <param name="src">Object to bind.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        void Bind(IPresentable src);
+        /// <summary>Image</summary>
+        Image = 1,
+        /// <summary>Title</summary>
+        Title = 2,
+        /// <summary>Description</summary>
+        Description = 3,
+        /// <summary>Others</summary>
+        Others = 0,
     }
 }

@@ -15,36 +15,28 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-
-namespace Cube.Forms.Demo
+namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Program
+    /// NoticePriority
     ///
     /// <summary>
-    /// デモプロジェクトのメインプログラムです。
+    /// Specifies the priority of a notice.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    static class Program
+    public enum NoticePriority
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Main
-        ///
-        /// <summary>
-        /// アプリケーションのメイン エントリ ポイントです。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [STAThread]
-        static void Main()
-        {
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.Run(new MainWindow());
-        }
+        /// <summary>Highest</summary>
+        Highest = 40,
+        /// <summary>High</summary>
+        High = 30,
+        /// <summary>Normal</summary>
+        Normal = 20,
+        /// <summary>Low</summary>
+        Low = 10,
+        /// <summary>Lowest</summary>
+        Lowest = 0,
     }
 }
