@@ -15,36 +15,31 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-
-namespace Cube.Forms.Demo
+namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Program
+    /// IBindable
     ///
     /// <summary>
-    /// デモプロジェクトのメインプログラムです。
+    /// Represents the interface that a view can be bindable with a
+    /// presentable object.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    static class Program
+    public interface IBindable
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Main
+        /// Bind
         ///
         /// <summary>
-        /// アプリケーションのメイン エントリ ポイントです。
+        /// Binds the specified object.
         /// </summary>
         ///
+        /// <param name="src">Object to bind.</param>
+        ///
         /* ----------------------------------------------------------------- */
-        [STAThread]
-        static void Main()
-        {
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-            System.Windows.Forms.Application.Run(new MainWindow());
-        }
+        void Bind(IPresentable src);
     }
 }
