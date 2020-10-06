@@ -16,58 +16,52 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Collections.Generic;
+using Cube.Forms.Controls;
 
-namespace Cube.Forms.Behaviors
+namespace Cube.Forms.Demo
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MessageBehavior(TMessage)
+    /// FlowLayoutBehavior
     ///
     /// <summary>
-    /// Represents the behavior that communicates with a presentable
-    /// object via a message.
+    /// Provides functionality to adjust the width of components in the
+    /// provided control when resizing.
     /// </summary>
     ///
-    /// <typeparam name="TMessage">Message type.</typeparam>
-    ///
     /* --------------------------------------------------------------------- */
-    public abstract class MessageBehavior<TMessage> : DisposableBase
+    public class FlowLayoutBehavior : DisposableBase
     {
         #region Constructors
 
-        /* ----------------------------------------------------------------- */
+        /* --------------------------------------------------------------------- */
         ///
-        /// MessageBehavior
+        /// FlowLayoutHacker
         ///
         /// <summary>
-        /// Initializes a new instance of the MessageBehavior class
-        /// with the specified presentable object.
+        /// Initializes a new instance of the FlowLayoutBehavior class
+        /// with the specified arguments.
         /// </summary>
         ///
-        /// <param name="src">Presentable object.</param>
+        /// <param name="src">View object.</param>
         ///
-        /* ----------------------------------------------------------------- */
-        protected MessageBehavior(IPresentable src)
+        /* --------------------------------------------------------------------- */
+        public FlowLayoutBehavior(FlowLayoutPanel src)
         {
-            _subscriber = src.Subscribe<TMessage>(Invoke);
+            void resize(object s, EventArgs e)
+            {
+                if (src.Controls.Count <= 0) return;
+                src.Controls[0].Width = src.ClientSize.Width - src.Padding.Left - src.Padding.Right;
+            }
+
+            src.Resize += resize;
+            _disposables.Add(Disposable.Create(() => src.Resize -= resize));
         }
 
         #endregion
 
-        #region Methods
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Invoke
-        ///
-        /// <summary>
-        /// Invokes the user action.
-        /// </summary>
-        ///
-        /// <param name="message">Message object.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected abstract void Invoke(TMessage message);
+        #region Implementations
 
         /* ----------------------------------------------------------------- */
         ///
@@ -86,13 +80,14 @@ namespace Cube.Forms.Behaviors
         /* ----------------------------------------------------------------- */
         protected override void Dispose(bool disposing)
         {
-            if (disposing) _subscriber.Dispose();
+            if (!disposing) return;
+            foreach (var e in _disposables) e.Dispose();
         }
 
         #endregion
 
         #region Fields
-        private readonly IDisposable _subscriber;
+        private readonly IList<IDisposable> _disposables = new List<IDisposable>();
         #endregion
     }
 }

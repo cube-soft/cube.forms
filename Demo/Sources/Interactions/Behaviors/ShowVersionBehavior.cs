@@ -15,48 +15,41 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Reflection;
-using System.Windows.Forms;
+using System.Drawing;
+using Cube.Forms.Behaviors;
 
 namespace Cube.Forms.Demo
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// MainWindow
+    /// ShowVersionBehavior
     ///
     /// <summary>
-    /// Represents the main window.
+    /// Represents the behavior to show a version dialog.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public partial class MainWindow : BorderlessWindow
+    public sealed class ShowVersionBehavior : MessageBehavior<AboutMessage>
     {
         #region Constructors
 
         /* --------------------------------------------------------------------- */
         ///
-        /// MainWindow
+        /// ShowVersionBehavior
         ///
         /// <summary>
-        /// Initializes a new instance of the MainWindow class.
+        /// Initializes a new instance of the ShowVersionBehavior class
+        /// with the specified arguments.
         /// </summary>
         ///
+        /// <param name="vm">ViewModel object.</param>
+        /// <param name="view">View object.</param>
+        ///
         /* --------------------------------------------------------------------- */
-        public MainWindow()
+        public ShowVersionBehavior(IPresentable vm, WindowBase view) : base(vm)
         {
-            InitializeComponent();
-
-            var asm = Assembly.GetExecutingAssembly();
-            ContentsControl.Resize += WhenResize;
-            DemoButton1.Click += (s, e) => new VersionWindow(asm)
-            {
-                Icon = Icon,
-                Text = Text,
-            }.ShowDialog();
-
-            Caption = HeaderCaptionControl;
-            Text = $"{ProductName} {ProductVersion}";
+            _icon = view.Icon;
+            _text = view.Text;
         }
 
         #endregion
@@ -65,24 +58,28 @@ namespace Cube.Forms.Demo
 
         /* --------------------------------------------------------------------- */
         ///
-        /// WhenResize
+        /// Invoke
         ///
         /// <summary>
-        /// リサイズ時に実行されるハンドラです。
+        /// Invokes the action.
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        private void WhenResize(object s, EventArgs e)
+        protected override void Invoke(AboutMessage message)
         {
-            if (!(s is Control control)) return;
-
-            var width = control.ClientSize.Width;
-            var left  = control.Padding.Left;
-            var right = control.Padding.Right;
-
-            DemoButton1.Width = width - left - right;
+            using var view = new VersionWindow(message.Value)
+            {
+                Icon = _icon,
+                Text = _text,
+            };
+            view.ShowDialog();
         }
 
+        #endregion
+
+        #region Fields
+        private readonly Icon _icon;
+        private readonly string _text;
         #endregion
     }
 }

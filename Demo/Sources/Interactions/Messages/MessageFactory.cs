@@ -16,38 +16,41 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
+using System.Reflection;
+using Cube.Mixin.Assembly;
 
 namespace Cube.Forms.Demo
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Program
+    /// MessageFactory
     ///
     /// <summary>
-    /// Represents the main program.
+    /// Provides functionality to create messages.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    static class Program
+    public static class MessageFactory
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// Main
+        /// CreateForNotice
         ///
         /// <summary>
-        /// Executes the main program of the application.
+        /// Creates a new instance of the NoticeMessage class.
         /// </summary>
         ///
+        /// <param name="src">Assembly information.</param>
+        ///
         /* ----------------------------------------------------------------- */
-        [STAThread]
-        static void Main()
+        public static NoticeMessage CreateForNotice(Assembly src) => new NoticeMessage(new Notice
         {
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-
-            var view = new MainWindow();
-            view.Bind(new MainViewModel());
-            System.Windows.Forms.Application.Run(view);
-        }
+            Title        = src.GetTitle(),
+            Message  = Properties.Resources.NoticeSample,
+            DisplayTime  = TimeSpan.FromSeconds(60),
+            InitialDelay = TimeSpan.FromMilliseconds(100),
+            Priority     = NoticePriority.Normal,
+            Value        = (Action<NoticeComponent>)(e => { }),
+        });
     }
 }

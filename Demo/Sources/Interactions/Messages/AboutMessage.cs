@@ -15,39 +15,33 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
+using System.Reflection;
 
 namespace Cube.Forms.Demo
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Program
+    /// AboutMessage
     ///
     /// <summary>
-    /// Represents the main program.
+    /// Represents the message to show a version dialog.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    static class Program
+    public class AboutMessage : Message<Assembly>
     {
-        /* ----------------------------------------------------------------- */
+        /* --------------------------------------------------------------------- */
         ///
-        /// Main
+        /// AboutMessage
         ///
         /// <summary>
-        /// Executes the main program of the application.
+        /// Initializes a new instance of the AboutMessage class with the
+        /// specified arguments.
         /// </summary>
         ///
-        /* ----------------------------------------------------------------- */
-        [STAThread]
-        static void Main()
-        {
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
-
-            var view = new MainWindow();
-            view.Bind(new MainViewModel());
-            System.Windows.Forms.Application.Run(view);
-        }
+        /// <param name="src">Assembly information.</param>
+        ///
+        /* --------------------------------------------------------------------- */
+        public AboutMessage(Assembly src) { Value = src; }
     }
 }

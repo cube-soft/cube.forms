@@ -15,39 +15,35 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-
 namespace Cube.Forms.Demo
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Program
+    /// NoticeMessage
     ///
     /// <summary>
-    /// Represents the main program.
+    /// Represents the message to show a notice dialog.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    static class Program
+    public class NoticeMessage : Message<Notice>
     {
-        /* ----------------------------------------------------------------- */
+        #region Constructors
+
+        /* --------------------------------------------------------------------- */
         ///
-        /// Main
+        /// NoticeMessage
         ///
         /// <summary>
-        /// Executes the main program of the application.
+        /// Initializes a new instance of the NoticeMessage class with the
+        /// specified arguments.
         /// </summary>
         ///
-        /* ----------------------------------------------------------------- */
-        [STAThread]
-        static void Main()
-        {
-            System.Windows.Forms.Application.EnableVisualStyles();
-            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+        /// <param name="src">Notice information.</param>
+        ///
+        /* --------------------------------------------------------------------- */
+        public NoticeMessage(Notice src) { Value = src; }
 
-            var view = new MainWindow();
-            view.Bind(new MainViewModel());
-            System.Windows.Forms.Application.Run(view);
-        }
+        #endregion
     }
 }
