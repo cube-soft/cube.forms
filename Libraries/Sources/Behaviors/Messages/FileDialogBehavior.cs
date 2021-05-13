@@ -28,7 +28,7 @@ namespace Cube.Forms.Behaviors
     /// OpenFileBehavior
     ///
     /// <summary>
-    /// Pvovides functionality to show a open-file dialog.
+    /// Provides functionality to show a open-file dialog.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -43,21 +43,10 @@ namespace Cube.Forms.Behaviors
         /// with the specified presentable object.
         /// </summary>
         ///
-        /// <param name="src">Presentable object.</param>
+        /// <param name="vm">Presentable object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public OpenFileBehavior(IPresentable src) :base (src) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Invoke
-        ///
-        /// <summary>
-        /// Shows a open-file dialog.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void Invoke(OpenFileMessage e)
+        public OpenFileBehavior(IPresentable vm) : base (vm, e =>
         {
             var dialog = new OpenFileDialog
             {
@@ -74,7 +63,7 @@ namespace Cube.Forms.Behaviors
             var ok = dialog.ShowDialog() == DialogResult.OK;
             e.Cancel = !ok;
             if (ok) e.Value = dialog.FileNames;
-        }
+        }) { }
     }
 
     #endregion
@@ -86,7 +75,7 @@ namespace Cube.Forms.Behaviors
     /// SaveFileBehavior
     ///
     /// <summary>
-    /// Pvovides functionality to show a save-file dialog.
+    /// Provides functionality to show a save-file dialog.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -101,21 +90,10 @@ namespace Cube.Forms.Behaviors
         /// with the specified presentable object.
         /// </summary>
         ///
-        /// <param name="src">Presentable object.</param>
+        /// <param name="vm">Presentable object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public SaveFileBehavior(IPresentable src) : base(src) { }
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Invoke
-        ///
-        /// <summary>
-        /// Shows a save-file dialog.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void Invoke(SaveFileMessage e)
+        public SaveFileBehavior(IPresentable vm) : base(vm, e =>
         {
             var dialog = new SaveFileDialog
             {
@@ -132,7 +110,7 @@ namespace Cube.Forms.Behaviors
             var ok = dialog.ShowDialog() == DialogResult.OK;
             e.Cancel = !ok;
             if (ok) e.Value = dialog.FileName;
-        }
+        }) { }
     }
 
     #endregion
@@ -144,14 +122,12 @@ namespace Cube.Forms.Behaviors
     /// OpenDirectoryBehavior
     ///
     /// <summary>
-    /// Pvovides functionality to show a directory dialog.
+    /// Provides functionality to show a directory dialog.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     public class OpenDirectoryBehavior : MessageBehavior<OpenDirectoryMessage>
     {
-        #region Constructors
-
         /* ----------------------------------------------------------------- */
         ///
         /// OpenDirectoryBehavior
@@ -161,25 +137,10 @@ namespace Cube.Forms.Behaviors
         /// with the specified presentable object.
         /// </summary>
         ///
-        /// <param name="src">Presentable object.</param>
+        /// <param name="vm">Presentable object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public OpenDirectoryBehavior(IPresentable src) : base(src) { }
-
-        #endregion
-
-        #region Implementations
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Invoke
-        ///
-        /// <summary>
-        /// 処理を実行します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        protected override void Invoke(OpenDirectoryMessage e)
+        public OpenDirectoryBehavior(IPresentable vm) : base(vm, e =>
         {
             var dialog = new FolderBrowserDialog { ShowNewFolderButton = e.NewButton };
 
@@ -189,9 +150,7 @@ namespace Cube.Forms.Behaviors
             var ok = dialog.ShowDialog() == DialogResult.OK;
             e.Cancel = !ok;
             if (ok) e.Value = dialog.SelectedPath;
-        }
-
-        #endregion
+        }) { }
     }
 
     #endregion

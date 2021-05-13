@@ -15,10 +15,6 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Reflection;
-using Cube.Mixin.Assembly;
-
 namespace Cube.Forms.Demo
 {
     /* --------------------------------------------------------------------- */
@@ -32,25 +28,26 @@ namespace Cube.Forms.Demo
     /* --------------------------------------------------------------------- */
     public static class MessageFactory
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
-        /// CreateForNotice
+        /// CreateForConfirm
         ///
         /// <summary>
-        /// Creates a new instance of the NoticeMessage class.
+        /// Creates a new instance of the DialogMessage class.
         /// </summary>
         ///
-        /// <param name="src">Assembly information.</param>
+        /// <returns>DialogMessage object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static NoticeMessage CreateForNotice(Assembly src) => new NoticeMessage(new Notice
+        public static DialogMessage CreateForConfirm() => new()
         {
-            Title        = src.GetTitle(),
-            Message  = Properties.Resources.NoticeSample,
-            DisplayTime  = TimeSpan.FromSeconds(60),
-            InitialDelay = TimeSpan.FromMilliseconds(100),
-            Priority     = NoticePriority.Normal,
-            Value        = (Action<NoticeComponent>)(e => { }),
-        });
+            Text    = "Closing window... Do you want to continue?",
+            Icon    = DialogIcon.Information,
+            Buttons = DialogButtons.OkCancel,
+        };
+
+        #endregion
     }
 }

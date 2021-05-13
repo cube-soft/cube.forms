@@ -15,26 +15,40 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-namespace Cube.Forms
+using System;
+using System.Windows.Forms;
+
+namespace Cube.Forms.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NoticeComponent
+    /// ClickBehavior
     ///
     /// <summary>
-    /// Specifies the component of the notice window.
+    /// Represents the behavior that a Control object is clicked.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public enum NoticeComponent
+    public class ClickBehavior : DisposableProxy
     {
-        /// <summary>Image</summary>
-        Image = 1,
-        /// <summary>Title</summary>
-        Title = 2,
-        /// <summary>Description</summary>
-        Description = 3,
-        /// <summary>Others</summary>
-        Others = 0,
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ClickBehavior
+        ///
+        /// <summary>
+        /// Initializes a new instance of the ClickBehavior class
+        /// with the specified arguments.
+        /// </summary>
+        ///
+        /// <param name="src">Source view.</param>
+        /// <param name="action">Action to click.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ClickBehavior(Control src, Action action) : base(() =>
+        {
+            void invoke(object s, EventArgs e) => action();
+            src.Click += invoke;
+            return Disposable.Create(() => src.Click -= invoke);
+        }) { }
     }
 }

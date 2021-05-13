@@ -15,34 +15,38 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Windows.Forms;
-
-namespace Cube.Forms.Behaviors
+namespace Cube.Forms.Controls
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// CloseBehavior
+    /// WebControlVersion
     ///
     /// <summary>
-    /// Provides functionality to close the window.
+    /// Specifies the version of the WebControl rendering engine.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class CloseBehavior : MessageBehavior<CloseMessage>
+    public enum WebControlVersion
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CloseBehavior
-        ///
-        /// <summary>
-        /// Initializes a new instance of the CloseBehavior class
-        /// with the specified arguments.
-        /// </summary>
-        ///
-        /// <param name="view">Source view.</param>
-        /// <param name="vm">Presentable object.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public CloseBehavior(Form view, IPresentable vm) : base(vm, _ => view.Close()) { }
+        /// <summary>IE7.</summary>
+        IE7 = 7000,
+        /// <summary>IE8 compatibility mode.</summary>
+        IE8Quirks = 8000,
+        /// <summary>IE8.</summary>
+        IE8 = 8888,
+        /// <summary>IE9 compatibility mode.</summary>
+        IE9Quirks = 9000,
+        /// <summary>IE9.</summary>
+        IE9 = 9999,
+        /// <summary>IE10 compatibility mode.</summary>
+        IE10Quirks = 10000,
+        /// <summary>IE10.</summary>
+        IE10 = 10001,
+        /// <summary>IE11 compatibility mode.</summary>
+        IE11Quirks = 11000,
+        /// <summary>IE11.</summary>
+        IE11 = 11001,
+        /// <summary>Latest available version.</summary>
+        Latest = -1,
     }
 }

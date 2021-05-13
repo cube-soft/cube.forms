@@ -15,34 +15,40 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Windows.Forms;
 
 namespace Cube.Forms.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// CloseBehavior
+    /// ClosingBehavior
     ///
     /// <summary>
-    /// Provides functionality to close the window.
+    /// Represents the behavior that a Form object is closing.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class CloseBehavior : MessageBehavior<CloseMessage>
+    public class ClosedBehavior : DisposableProxy
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// CloseBehavior
+        /// ClosedBehavior
         ///
         /// <summary>
-        /// Initializes a new instance of the CloseBehavior class
+        /// Initializes a new instance of the ClosedBehavior class
         /// with the specified arguments.
         /// </summary>
         ///
-        /// <param name="view">Source view.</param>
-        /// <param name="vm">Presentable object.</param>
+        /// <param name="src">Source view.</param>
+        /// <param name="action">Action when the view is closed.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public CloseBehavior(Form view, IPresentable vm) : base(vm, _ => view.Close()) { }
+        public ClosedBehavior(Form src, Action<FormClosedEventArgs> action) : base(() =>
+        {
+            void invoke(object s, FormClosedEventArgs e) => action(e);
+            src.FormClosed += invoke;
+            return Disposable.Create(() => src.FormClosed -= invoke);
+        }) { }
     }
 }

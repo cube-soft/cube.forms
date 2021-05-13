@@ -16,121 +16,113 @@
 //
 /* ------------------------------------------------------------------------- */
 using System;
-using System.Collections.Generic;
-using WinForms = System.Windows.Forms;
 
-namespace Cube.Forms
+namespace Cube
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// WindowBase
+    /// NoticeCallback
     ///
     /// <summary>
-    /// Represents the base class of WinForms based window.
+    /// Represents the method called when a part of the notice window
+    /// is clicked.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class WindowBase : WinForms.Form, IBindable
+    [Serializable]
+    public delegate void NoticeCallback(NoticeMessage src, NoticeResult result);
+
+    /* --------------------------------------------------------------------- */
+    ///
+    /// NoticeMessage
+    ///
+    /// <summary>
+    /// Represents the information of a notice.
+    /// </summary>
+    ///
+    /* --------------------------------------------------------------------- */
+    public class NoticeMessage : Message<object>
     {
         #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Presenter
+        /// Title
         ///
         /// <summary>
-        /// Gets or the presenter object.
+        /// Gets or sets the title of the notice.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected IPresentable Presenter { get; private set; }
+        public string Title { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Behaviors
+        /// DisplayTime
         ///
         /// <summary>
-        /// Gets the collection of registered behaviors.
+        /// Gets or sets the time to display the notice.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected IList<IDisposable> Behaviors { get; } = new List<IDisposable>();
-
-        #endregion
-
-        #region Methods
+        public TimeSpan DisplayTime { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Bind
+        /// InitialDelay
         ///
         /// <summary>
-        /// Binds the window to the specified object. If the Presenter is
-        /// already set, the specified object is ignored.
+        /// Gets or sets the time to delay the display of the notice.
         /// </summary>
         ///
-        /// <param name="src">Object to bind.</param>
-        ///
         /* ----------------------------------------------------------------- */
-        public void Bind(IPresentable src)
-        {
-            if (Presenter != null) return;
-            Presenter = src;
-            OnBind(src);
-        }
+        public TimeSpan InitialDelay { get; set; }
 
         /* ----------------------------------------------------------------- */
         ///
-        /// OnBind
+        /// Priority
         ///
         /// <summary>
-        /// Binds the window to the specified object.
+        /// Gets or sets the priority of the notice.
         /// </summary>
         ///
-        /// <param name="src">Object to bind.</param>
-        ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnBind(IPresentable src) { }
-
-        #endregion
-
-        #region Implementations
+        public NoticePriority Priority { get; set; } = NoticePriority.Normal;
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Dispose
+        /// Location
         ///
         /// <summary>
-        /// Releases the unmanaged resources used by the StandardForm
-        /// and optionally releases the managed resources.
+        /// Gets or sets the location to show the notice window.
         /// </summary>
         ///
-        /// <param name="disposing">
-        /// true to release both managed and unmanaged resources;
-        /// false to release only unmanaged resources.
-        /// </param>
+        /* ----------------------------------------------------------------- */
+        public NoticeLocation Location { get; set; }
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Style
+        ///
+        /// <summary>
+        /// Gets or sets the notice style.
+        /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected override void Dispose(bool disposing)
-        {
-            try
-            {
-                if (_disposed) return;
-                _disposed = true;
-                if (!disposing) return;
+        public NoticeStyle Style { get; set; }
 
-                foreach (var behavior in Behaviors) behavior.Dispose();
-                Behaviors.Clear();
-                Presenter?.Dispose();
-                Presenter = null;
-            }
-            finally { base.Dispose(disposing); }
-        }
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Callback
+        ///
+        /// <summary>
+        /// Gets or sets the callback action when the user clicks on the
+        /// notice window.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        public NoticeCallback Callback { get; set; }
 
-        #endregion
-
-        #region Fields
-        private bool _disposed = false;
         #endregion
     }
 }
