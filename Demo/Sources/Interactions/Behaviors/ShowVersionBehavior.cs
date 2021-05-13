@@ -29,7 +29,7 @@ namespace Cube.Forms.Demo
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class ShowVersionBehavior : MessageBehavior<AboutMessage>
+    public sealed class ShowVersionBehavior : MessageBehaviorBase<AboutMessage>
     {
         #region Constructors
 
@@ -46,7 +46,7 @@ namespace Cube.Forms.Demo
         /// <param name="view">View object.</param>
         ///
         /* --------------------------------------------------------------------- */
-        public ShowVersionBehavior(IPresentable vm, WindowBase view) : base(vm)
+        public ShowVersionBehavior(BindableWindow view, IPresentable vm) : base(vm)
         {
             _icon = view.Icon;
             _text = view.Text;

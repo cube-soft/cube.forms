@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
     <PropertyGroup>
-        <Version>3.1.0</Version>
+        <Version>4.0.0</Version>
         <Authors>clown;cube-soft</Authors>
         <Company>CubeSoft</Company>
-        <Description>Provide GUI components and support the MVVM pattern in WinForms applications.</Description>
+        <Description>Provides GUI components and support the MVVM pattern in WinForms applications.</Description>
         <Copyright>Copyright © 2010 CubeSoft, Inc.</Copyright>
         <PackageTags>Cube;WinForms;MVVM</PackageTags>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
@@ -24,7 +24,7 @@
         <DocumentationFile>bin\Any CPU\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="Cube.Core" Version="3.1.0" />
+        <PackageReference Include="Cube.Core" Version="4.0.0" />
         <Reference Include="WindowsBase" />
     </ItemGroup>
     <ItemGroup>

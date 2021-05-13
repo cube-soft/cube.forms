@@ -15,34 +15,34 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Windows.Forms;
+using System;
+using System.Diagnostics;
 
 namespace Cube.Forms.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// CloseBehavior
+    /// UriBehavior
     ///
     /// <summary>
-    /// Provides functionality to close the window.
+    /// Represents the behavior when an Uri message is received.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class CloseBehavior : MessageBehavior<CloseMessage>
+    public class UriBehavior : MessageBehavior<Uri>
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// CloseBehavior
+        /// UriBehavior
         ///
         /// <summary>
-        /// Initializes a new instance of the CloseBehavior class
+        /// Initializes a new instance of the UriBehavior class
         /// with the specified arguments.
         /// </summary>
         ///
-        /// <param name="view">Source view.</param>
         /// <param name="vm">Presentable object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public CloseBehavior(Form view, IPresentable vm) : base(vm, _ => view.Close()) { }
+        public UriBehavior(IPresentable vm) : base(vm, e => Process.Start(e.ToString())) { }
     }
 }

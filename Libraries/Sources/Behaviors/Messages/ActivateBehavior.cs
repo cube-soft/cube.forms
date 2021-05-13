@@ -16,26 +16,27 @@
 //
 /* ------------------------------------------------------------------------- */
 using System.Windows.Forms;
+using Cube.Forms.Controls;
 
 namespace Cube.Forms.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// CloseBehavior
+    /// ActivateBehavior
     ///
     /// <summary>
-    /// Provides functionality to close the window.
+    /// Provides functionality to activate the window.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class CloseBehavior : MessageBehavior<CloseMessage>
+    public class ActivateBehavior : MessageBehavior<ActivateMessage>
     {
         /* ----------------------------------------------------------------- */
         ///
-        /// CloseBehavior
+        /// ActivateBehavior
         ///
         /// <summary>
-        /// Initializes a new instance of the CloseBehavior class
+        /// Initializes a new instance of the ActivateBehavior class
         /// with the specified arguments.
         /// </summary>
         ///
@@ -43,6 +44,11 @@ namespace Cube.Forms.Behaviors
         /// <param name="vm">Presentable object.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public CloseBehavior(Form view, IPresentable vm) : base(vm, _ => view.Close()) { }
+        public ActivateBehavior(Form view, IPresentable vm) : base(vm, e =>
+        {
+            if (view.WindowState == FormWindowState.Minimized) view.WindowState = FormWindowState.Normal;
+            view.Activate();
+            view.ResetTopMost();
+        }) { }
     }
 }

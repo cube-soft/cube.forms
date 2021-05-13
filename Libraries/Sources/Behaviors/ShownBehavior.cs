@@ -15,28 +15,40 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-namespace Cube.Forms
+using System;
+using System.Windows.Forms;
+
+namespace Cube.Forms.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NoticePriority
+    /// ShownBehavior
     ///
     /// <summary>
-    /// Specifies the priority of a notice.
+    /// Represents the behavior that a Form object is shown.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public enum NoticePriority
+    public class ShownBehavior : DisposableProxy
     {
-        /// <summary>Highest</summary>
-        Highest = 40,
-        /// <summary>High</summary>
-        High = 30,
-        /// <summary>Normal</summary>
-        Normal = 20,
-        /// <summary>Low</summary>
-        Low = 10,
-        /// <summary>Lowest</summary>
-        Lowest = 0,
+        /* ----------------------------------------------------------------- */
+        ///
+        /// ShownBehavior
+        ///
+        /// <summary>
+        /// Initializes a new instance of the ShownBehavior class
+        /// with the specified arguments.
+        /// </summary>
+        ///
+        /// <param name="src">Source view.</param>
+        /// <param name="action">Action to be shown.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public ShownBehavior(Form src, Action action) : base(() =>
+        {
+            void invoke(object s, EventArgs e) => action();
+            src.Shown += invoke;
+            return Disposable.Create(() => src.Shown -= invoke);
+        }) { }
     }
 }

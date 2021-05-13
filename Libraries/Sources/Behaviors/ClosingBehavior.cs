@@ -15,35 +15,40 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-namespace Cube.Forms.Demo
+using System;
+using System.Windows.Forms;
+
+namespace Cube.Forms.Behaviors
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// NoticeMessage
+    /// ClosingBehavior
     ///
     /// <summary>
-    /// Represents the message to show a notice dialog.
+    /// Represents the behavior that a Form object is closing.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class NoticeMessage : Message<Notice>
+    public class ClosingBehavior : DisposableProxy
     {
-        #region Constructors
-
-        /* --------------------------------------------------------------------- */
+        /* ----------------------------------------------------------------- */
         ///
-        /// NoticeMessage
+        /// ClosingBehavior
         ///
         /// <summary>
-        /// Initializes a new instance of the NoticeMessage class with the
-        /// specified arguments.
+        /// Initializes a new instance of the ClosingBehavior class
+        /// with the specified arguments.
         /// </summary>
         ///
-        /// <param name="src">Notice information.</param>
+        /// <param name="src">Source view.</param>
+        /// <param name="action">Action when the view is closing.</param>
         ///
-        /* --------------------------------------------------------------------- */
-        public NoticeMessage(Notice src) { Value = src; }
-
-        #endregion
+        /* ----------------------------------------------------------------- */
+        public ClosingBehavior(Form src, Action<FormClosingEventArgs> action) : base(() =>
+        {
+            void invoke(object s, FormClosingEventArgs e) => action(e);
+            src.FormClosing += invoke;
+            return Disposable.Create(() => src.FormClosing -= invoke);
+        }) { }
     }
 }

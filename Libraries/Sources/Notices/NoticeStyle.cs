@@ -17,7 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System.Drawing;
 
-namespace Cube.Forms
+namespace Cube
 {
     #region NoticeStyle
 
@@ -26,7 +26,7 @@ namespace Cube.Forms
     /// NoticeStyle
     ///
     /// <summary>
-    /// Repesents the styles of the notice window.
+    /// Represents the styles of the notice window.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -67,14 +67,14 @@ namespace Cube.Forms
 
         /* --------------------------------------------------------------------- */
         ///
-        /// Description
+        /// Text
         ///
         /// <summary>
         /// Gets or sets the style of the message part.
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        public NoticeTextStyle Message { get; set; }
+        public NoticeTextStyle Text { get; set; }
     }
 
     #endregion
@@ -86,7 +86,7 @@ namespace Cube.Forms
     /// NoticeTextStyle
     ///
     /// <summary>
-    /// Repesents the styles of a text part of the notice window.
+    /// Represents the styles of a text part of the notice window.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -124,7 +124,7 @@ namespace Cube.Forms
     /// NoticeImageStyle
     ///
     /// <summary>
-    /// Repesents the styles of an image part of the notice window.
+    /// Represents the styles of an image part of the notice window.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */

@@ -15,60 +15,42 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using Cube.Forms.Behaviors;
-using Cube.Mixin.Generics;
+using System.Reflection;
 
 namespace Cube.Forms.Demo
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ShowNoticeBehavior
+    /// MainFacade
     ///
     /// <summary>
-    /// Represents the behavior to show a notice dialog.
+    /// Represents the facade model to communicate with the MainViewModel
+    /// object.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public sealed class ShowNoticeBehavior : MessageBehavior<NoticeMessage>
+    public class MainFacade
     {
-        #region Constructors
-
         /* --------------------------------------------------------------------- */
         ///
-        /// ShowNoticeBehavior
+        /// Assembly
         ///
         /// <summary>
-        /// Initializes a new instance of the ShowNoticeBehavior class
-        /// with the specified arguments.
-        /// </summary>
-        ///
-        /// <param name="vm">ViewModel object.</param>
-        ///
-        /* --------------------------------------------------------------------- */
-        public ShowNoticeBehavior(IPresentable vm) : base(vm) { }
-
-        #endregion
-
-        #region Implementations
-
-        /* --------------------------------------------------------------------- */
-        ///
-        /// Invoke
-        ///
-        /// <summary>
-        /// Invokes the action.
+        /// Gets the assembly object.
         /// </summary>
         ///
         /* --------------------------------------------------------------------- */
-        protected override void Invoke(NoticeMessage m)
-        {
-            var view = new NoticeWindow();
-            view.Selected  += (s, e) => m.Value.Value.TryCast<Action<NoticeComponent>>()?.Invoke(e.Value);
-            view.Completed += (s, e) => view.Close();
-            view.Show(m.Value);
-        }
+        public Assembly Assembly { get; } = Assembly.GetExecutingAssembly();
 
-        #endregion
+        /* --------------------------------------------------------------------- */
+        ///
+        /// Notice
+        ///
+        /// <summary>
+        /// Gets the model for notice component.
+        /// </summary>
+        ///
+        /* --------------------------------------------------------------------- */
+        public NoticeFacade Notice { get; } = new();
     }
 }

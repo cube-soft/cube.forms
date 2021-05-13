@@ -22,15 +22,15 @@ namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ButtonStyle
+    /// ButtonStyleElement
     ///
     /// <summary>
-    /// ボタンの外観を定義するためのクラスです。
+    /// Represents the style of the customized button.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TypeConverter(typeof(OnlyExpandableConverter))]
-    public class ButtonStyle : ObservableBase
+    public class ButtonStyleElement : ObservableBase
     {
         #region Properties
 
@@ -39,7 +39,7 @@ namespace Cube.Forms
         /// BackColor
         ///
         /// <summary>
-        /// コントロールの背景色を取得または設定します。
+        /// Gets or sets the background color.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -47,8 +47,8 @@ namespace Cube.Forms
         [DefaultValue(typeof(Color), "")]
         public Color BackColor
         {
-            get => _backColor;
-            set => SetProperty(ref _backColor, value);
+            get => Get<Color>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -56,7 +56,7 @@ namespace Cube.Forms
         /// BackgroundImage
         ///
         /// <summary>
-        /// コントロールの背景イメージを取得または設定します。
+        /// Gets or sets the background image.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -64,8 +64,8 @@ namespace Cube.Forms
         [DefaultValue(null)]
         public Image BackgroundImage
         {
-            get => _backgroundImage;
-            set => SetProperty(ref _backgroundImage, value);
+            get => Get<Image>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -73,7 +73,7 @@ namespace Cube.Forms
         /// BorderColor
         ///
         /// <summary>
-        /// コントロールを囲む境界線の色を取得または設定します。
+        /// Gets or sets the border color.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -81,8 +81,8 @@ namespace Cube.Forms
         [DefaultValue(typeof(Color), "")]
         public Color BorderColor
         {
-            get => _borderColor;
-            set => SetProperty(ref _borderColor, value);
+            get => Get<Color>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -90,8 +90,7 @@ namespace Cube.Forms
         /// BorderSize
         ///
         /// <summary>
-        /// コントロールを囲む境界線のサイズ (ピクセル単位) を取得または
-        /// 設定します。
+        /// Gets or sets the border width.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -99,8 +98,8 @@ namespace Cube.Forms
         [DefaultValue(-1)]
         public int BorderSize
         {
-            get => _borderSize;
-            set => SetProperty(ref _borderSize, value);
+            get => Get(() => -1);
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -108,7 +107,7 @@ namespace Cube.Forms
         /// Image
         ///
         /// <summary>
-        /// コントロールに表示されるイメージを取得または設定します。
+        /// Gets or sets the image displayed in the control.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -116,8 +115,8 @@ namespace Cube.Forms
         [DefaultValue(null)]
         public Image Image
         {
-            get => _image;
-            set => SetProperty(ref _image, value);
+            get => Get<Image>();
+            set => Set(value);
         }
 
         /* ----------------------------------------------------------------- */
@@ -125,7 +124,7 @@ namespace Cube.Forms
         /// ContentColor
         ///
         /// <summary>
-        /// コントロール上に表示されるテキストの色を取得または設定します。
+        /// Gets or sets the color of the main content (a.k.a ForeColor).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -133,8 +132,8 @@ namespace Cube.Forms
         [DefaultValue(typeof(Color), "")]
         public Color ContentColor
         {
-            get => _contentColor;
-            set => SetProperty(ref _contentColor, value);
+            get => Get<Color>();
+            set => Set(value);
         }
 
         #endregion
@@ -159,45 +158,37 @@ namespace Cube.Forms
         protected override void Dispose(bool disposing) { }
 
         #endregion
-
-        #region Fields
-        private Color _backColor = Color.Empty;
-        private Color _borderColor = Color.Empty;
-        private Color _contentColor = Color.Empty;
-        private Image _backgroundImage = null;
-        private Image _image = null;
-        private int _borderSize = -1;
-        #endregion
     }
 
     /* --------------------------------------------------------------------- */
     ///
-    /// ButtonStyleContainer
+    /// ButtonStyle
     ///
     /// <summary>
-    /// ボタンの外観を定義するためのクラスです。
+    /// Represents the style of the customized button (default, checked,
+    /// mouse-over, mouse-down, and disabled condition).
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
     [TypeConverter(typeof(OnlyExpandableConverter))]
-    public class ButtonStyleContainer : ObservableBase
+    public class ButtonStyle : ObservableBase
     {
         #region Constructors
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ButtonStyleContainer
+        /// ButtonStyle
         ///
         /// <summary>
-        /// オブジェクトを初期化します。
+        /// Initialized a new instance of the ButtonStyle class.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public ButtonStyleContainer()
+        public ButtonStyle()
         {
             Default.PropertyChanged   += (s, e) => Refresh(nameof(Default));
-            Checked.PropertyChanged   += (s, e) => Refresh(nameof(Checked));
             Disabled.PropertyChanged  += (s, e) => Refresh(nameof(Disabled));
+            Checked.PropertyChanged   += (s, e) => Refresh(nameof(Checked));
             MouseOver.PropertyChanged += (s, e) => Refresh(nameof(MouseOver));
             MouseDown.PropertyChanged += (s, e) => Refresh(nameof(MouseDown));
         }
@@ -211,16 +202,33 @@ namespace Cube.Forms
         /// Default
         ///
         /// <summary>
-        /// 通常時の外観を取得または設定します。
+        /// Gets or sets the style of the normal state.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public ButtonStyle Default { get; } = new ButtonStyle
+        public ButtonStyleElement Default { get; } = new ButtonStyleElement
         {
-            ContentColor = SystemColors.ControlText,
-            BorderColor  = SystemColors.ActiveBorder,
-            BorderSize   = 1
+            ContentColor    = SystemColors.ControlText,
+            BorderColor     = SystemColors.ActiveBorder,
+            BorderSize      = 1,
+        };
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Disabled
+        ///
+        /// <summary>
+        /// Gets or sets the style of the disabled state.
+        /// </summary>
+        ///
+        /* ----------------------------------------------------------------- */
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        public ButtonStyleElement Disabled { get; } = new ButtonStyleElement
+        {
+            BackColor = SystemColors.Control,
+            ContentColor    = SystemColors.GrayText,
+            BorderColor     = SystemColors.InactiveBorder
         };
 
         /* ----------------------------------------------------------------- */
@@ -228,53 +236,36 @@ namespace Cube.Forms
         /// Checked
         ///
         /// <summary>
-        /// チェック時の外観を取得または設定します。
+        /// Gets or sets the style of the checked state.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public ButtonStyle Checked { get; } = new ButtonStyle();
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Disabled
-        ///
-        /// <summary>
-        /// 無効時の外観を取得または設定します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public ButtonStyle Disabled { get; } = new ButtonStyle
-        {
-            BackColor    = SystemColors.Control,
-            ContentColor = SystemColors.GrayText,
-            BorderColor  = SystemColors.InactiveBorder
-        };
+        public ButtonStyleElement Checked { get; } = new ButtonStyleElement();
 
         /* ----------------------------------------------------------------- */
         ///
         /// MouseOver
         ///
         /// <summary>
-        /// マウスオーバ時の外観を取得または設定します。
+        /// Gets or sets the style of the mouse-over state.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public ButtonStyle MouseOver { get; } = new ButtonStyle();
+        public ButtonStyleElement MouseOver { get; } = new ButtonStyleElement();
 
         /* ----------------------------------------------------------------- */
         ///
         /// MouseDown
         ///
         /// <summary>
-        /// マウス押下時の外観を取得または設定します。
+        /// Gets or sets the style of the mouse-down state.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
-        public ButtonStyle MouseDown { get; } = new ButtonStyle();
+        public ButtonStyleElement MouseDown { get; } = new ButtonStyleElement();
 
         #endregion
 

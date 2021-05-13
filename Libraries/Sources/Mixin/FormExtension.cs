@@ -15,11 +15,11 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using Cube.Mixin.String;
 using System;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
+using Cube.Mixin.String;
 
 namespace Cube.Forms.Controls
 {
@@ -28,7 +28,7 @@ namespace Cube.Forms.Controls
     /// FormExtension
     ///
     /// <summary>
-    /// System.Windows.Forms.Form の拡張用クラスです。
+    /// Provides the extended methods of the Form class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
@@ -43,11 +43,11 @@ namespace Cube.Forms.Controls
         /// UpdateCulture
         ///
         /// <summary>
-        /// 表示言語を更新します。
+        /// Updates the culture information of the specified language.
         /// </summary>
         ///
-        /// <param name="src">フォーム</param>
-        /// <param name="value">表示言語名</param>
+        /// <param name="src">Form object.</param>
+        /// <param name="value">Language to show.</param>
         ///
         /* ----------------------------------------------------------------- */
         public static void UpdateCulture<T>(this T src, Language value) where T : Form
@@ -63,7 +63,7 @@ namespace Cube.Forms.Controls
         /// UpdateCulture
         ///
         /// <summary>
-        /// 表示言語を更新します。
+        /// Updates the culture information.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
@@ -85,38 +85,38 @@ namespace Cube.Forms.Controls
         /// UpdateText
         ///
         /// <summary>
-        /// フォームのタイトルを "message - ProductName" と言う表記で
-        /// 更新します。
+        /// Update the title of the form with the notation
+        /// "message - ProductName".
         /// </summary>
         ///
-        /// <param name="src">フォーム</param>
-        /// <param name="message">タイトルに表示するメッセージ</param>
+        /// <param name="src">Form object.</param>
+        /// <param name="text">Text to show at the title bar.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void UpdateText(this Form src, string message) =>
-            src.UpdateText(message, src.ProductName);
+        public static void UpdateText(this Form src, string text) =>
+            src.UpdateText(text, src.ProductName);
 
         /* ----------------------------------------------------------------- */
         ///
         /// UpdateText
         ///
         /// <summary>
-        /// フォームのタイトルを "message - ProductName" と言う表記で
-        /// 更新します。
+        /// Update the title of the form with the notation
+        /// "message - ProductName".
         /// </summary>
         ///
-        /// <param name="src">フォーム</param>
-        /// <param name="message">タイトルに表示するメッセージ</param>
-        /// <param name="product">製品名</param>
+        /// <param name="src">Form object.</param>
+        /// <param name="text">Text to show at the title bar.</param>
+        /// <param name="product">Product name.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public static void UpdateText(this Form src, string message, string product)
+        public static void UpdateText(this Form src, string text, string product)
         {
             var ss = new System.Text.StringBuilder();
 
-            ss.Append(message);
-            if (message.HasValue() && product.HasValue()) ss.Append(" - ");
-            ss.Append(product);
+            _ = ss.Append(text);
+            if (text.HasValue() && product.HasValue()) _ = ss.Append(" - ");
+            _ = ss.Append(product);
 
             src.Text = ss.ToString();
         }
@@ -127,30 +127,13 @@ namespace Cube.Forms.Controls
 
         /* ----------------------------------------------------------------- */
         ///
-        /// BringToFront
-        ///
-        /// <summary>
-        /// フォームを最前面に表示します。
-        /// </summary>
-        ///
-        /// <param name="src">フォーム</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static void BringToFront(this Form src)
-        {
-            src.Activate();
-            src.ResetTopMost();
-        }
-
-        /* ----------------------------------------------------------------- */
-        ///
         /// ResetTopMost
         ///
         /// <summary>
-        /// TopMost の値をリセットします。
+        /// Resets the value of the TopMost property.
         /// </summary>
         ///
-        /// <param name="src">フォーム</param>
+        /// <param name="src">Form object.</param>
         ///
         /* ----------------------------------------------------------------- */
         public static void ResetTopMost(this Form src)
@@ -166,16 +149,19 @@ namespace Cube.Forms.Controls
         /// SetTopMost
         ///
         /// <summary>
-        /// フォームを最前面に表示します。
+        /// Shows the specified window at the top most.
         /// </summary>
         ///
-        /// <param name="src">フォーム</param>
-        /// <param name="active">アクティブ状態にするかどうか</param>
+        /// <param name="src">Form object.</param>
+        /// <param name="active">
+        /// Value indicating whether to make the specified window active.
+        /// </param>
         ///
         /// <remarks>
-        /// SetTopMost メソッドは主にフォーカスを奪わずに最前面に表示する
-        /// 時に使用します。この場合、最前面に表示された状態でも TopMost
-        /// プロパティは false となります。
+        /// The method is mainly used to display at the top-most without
+        /// taking the focus away. In this case, the TopMost property
+        /// will be false even when it is displayed in the top-most
+        /// position.
         /// </remarks>
         ///
         /* ----------------------------------------------------------------- */
@@ -194,16 +180,24 @@ namespace Cube.Forms.Controls
         /// SetTopMostWithoutActivate
         ///
         /// <summary>
-        /// フォームを非アクティブ状態で最前面に表示します。
+        /// Sets the TopMost flag without making the window active.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        private static void SetTopMostWithoutActivate(this Form src) =>
-            User32.NativeMethods.SetWindowPos(src.Handle,
+        private static void SetTopMostWithoutActivate(this Form src)
+        {
+            var pos  = src.Location;
+            var size = src.Size;
+
+            if (User32.NativeMethods.SetWindowPos(src.Handle,
                 (IntPtr)(-1), // HWND_TOPMOST
                 0, 0, 0, 0,
                 0x0413 // SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSENDCHANGING | SWP_NOSIZE
-            );
+            )) {
+                src.Location = pos;
+                src.Size     = size;
+            }
+        }
 
         #endregion
 
