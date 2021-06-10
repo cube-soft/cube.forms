@@ -17,52 +17,33 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Collections.Generic;
-using Cube.Forms.Controls;
-using WinForms = System.Windows.Forms;
+using System.Windows.Forms;
 
 namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// BindableWindow
+    /// WindowBase
     ///
     /// <summary>
     /// Represents the base class of WinForms-based IBindable implementation.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class BindableWindow : WinForms.Form, IBindable
+    public class WindowBase : Form, IBinder
     {
-        #region Constructors
-
-        /* ----------------------------------------------------------------- */
-        ///
-        /// BindableWindow
-        ///
-        /// <summary>
-        /// Initializes a new instance of the BindableWindow class.
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public BindableWindow()
-        {
-            Behaviors.Add(Locale.Subscribe(this.UpdateCulture));
-        }
-
-        #endregion
-
         #region Properties
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Presenter
+        /// Bindable
         ///
         /// <summary>
-        /// Gets or the presenter object.
+        /// Gets the bindable object.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected IPresentable Presenter { get; private set; }
+        protected IBindable Bindable { get; private set; }
 
         /* ----------------------------------------------------------------- */
         ///
@@ -73,7 +54,7 @@ namespace Cube.Forms
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        protected ICollection<IDisposable> Behaviors { get; } = new List<IDisposable>();
+        protected DisposableContainer Behaviors { get; } = new();
 
         #endregion
 
@@ -84,17 +65,18 @@ namespace Cube.Forms
         /// Bind
         ///
         /// <summary>
-        /// Binds the window to the specified object. If the Presenter is
-        /// already set, the specified object is ignored.
+        /// Binds the window to the specified object.
+        /// If the Bindable property is already set, the specified object
+        /// is ignored.
         /// </summary>
         ///
         /// <param name="src">Object to bind.</param>
         ///
         /* ----------------------------------------------------------------- */
-        public void Bind(IPresentable src)
+        public void Bind(IBindable src)
         {
-            if (Presenter != null) return;
-            Presenter = src;
+            if (Bindable != null) return;
+            Bindable = src;
             OnBind(src);
         }
 
@@ -109,7 +91,7 @@ namespace Cube.Forms
         /// <param name="src">Object to bind.</param>
         ///
         /* ----------------------------------------------------------------- */
-        protected virtual void OnBind(IPresentable src) { }
+        protected virtual void OnBind(IBindable src) { }
 
         #endregion
 
@@ -138,10 +120,9 @@ namespace Cube.Forms
                 _disposed = true;
                 if (!disposing) return;
 
-                foreach (var behavior in Behaviors) behavior.Dispose();
-                Behaviors.Clear();
-                Presenter?.Dispose();
-                Presenter = null;
+                Behaviors.Dispose();
+                Bindable?.Dispose();
+                Bindable = null;
             }
             finally { base.Dispose(disposing); }
         }

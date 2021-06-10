@@ -15,78 +15,86 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
+using System;
 using System.Runtime.InteropServices;
-using System.Text;
 
-namespace Cube.Forms.UrlMon
+namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// UrlMon.NativeMethods
+    /// DWebBrowserEvents2
     ///
     /// <summary>
-    /// Provides functions defined in the urlmon.dll.
+    /// https://msdn.microsoft.com/en-us/library/aa768283.aspx
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class NativeMethods
+    [ComImport,
+     Guid("34A715A0-6587-11D0-924A-0020AFC7AC4D"),
+     InterfaceType(ComInterfaceType.InterfaceIsIDispatch),
+     TypeLibType(TypeLibTypeFlags.FHidden)]
+    internal interface DWebBrowserEvents2
     {
         #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UrlMkSetSessionOption
+        /// BeforeNavigate2
         ///
         /// <summary>
-        /// https://msdn.microsoft.com/ja-jp/library/ms775125.aspx
+        /// Fires before navigation occurs in the given object (on either
+        /// a window element or a frameset element).
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DllImport(LibName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-        public static extern int UrlMkSetSessionOption(int dwOption, string pBuffer,
-            int dwBufferLength, int dwReserved);
+        [DispId(250)]
+        void BeforeNavigate2(
+            [In, MarshalAs(UnmanagedType.IDispatch)] object pDisp,
+            [In] ref object URL,
+            [In] ref object flags,
+            [In] ref object targetFrameName,
+            [In] ref object postData,
+            [In] ref object headers,
+            [In, Out] ref bool cancel
+        );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// UrlMkGetSessionOption
+        /// NewWindow3
         ///
         /// <summary>
-        /// https://msdn.microsoft.com/ja-jp/library/ms775124.aspx
+        /// Raised when a new window is to be created. Extends NewWindow2
+        /// with additional information about the new window.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DllImport(LibName, CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-        public static extern int UrlMkGetSessionOption(int dwOption, StringBuilder pBuffer,
-            int dwBufferLength, ref int pdwBufferLength, int dwReserved);
+        [DispId(273)]
+        void NewWindow3(
+            [In, MarshalAs(UnmanagedType.IDispatch)] object pDisp,
+            [In, Out] ref bool cancel,
+            [In] ref object flags,
+            [In] ref object URLContext,
+            [In] ref object URL
+        );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// CoInternetIsFeatureEnabled
+        /// NavigateError
         ///
         /// <summary>
-        /// https://msdn.microsoft.com/ja-jp/library/ms537164.aspx
+        /// Fires when an error occurs during navigation.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        [DllImport(LibName)]
-        public static extern int CoInternetIsFeatureEnabled(int featureEntry, int dwFlags);
+        [DispId(271)]
+        void NavigateError(
+            [In, MarshalAs(UnmanagedType.IDispatch)] object pDisp,
+            [In] ref object URL,
+            [In] ref object frame,
+            [In] ref object statusCode,
+            [In, Out] ref bool cancel
+        );
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// CoInternetSetFeatureEnabled
-        ///
-        /// <summary>
-        /// https://msdn.microsoft.com/ja-jp/library/ms537168.aspx
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [DllImport(LibName)]
-        public static extern int CoInternetSetFeatureEnabled(int FeatureEntry, int dwFlags, bool fEnable);
-
-        #endregion
-
-        #region Fields
-        const string LibName = "urlmon.dll";
         #endregion
     }
 }

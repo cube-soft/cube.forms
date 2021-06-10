@@ -15,63 +15,55 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 
-namespace Cube.Forms
+namespace Cube.Mixin.Forms.Controls
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// IDocHostShowUI
+    /// ListViewExtension
     ///
     /// <summary>
-    /// https://msdn.microsoft.com/en-us/library/aa753269.aspx
+    /// Provides extended methods of the ListView class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    [ComImport,
-     Guid("C4D244B0-D43E-11CF-893B-00AA00BDCE1A"),
-     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    internal interface IDocHostShowUI
+    public static class ListViewExtension
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ShowMessage
-        ///
-        /// <summary>
-        /// メッセージを表示します。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        [return: MarshalAs(UnmanagedType.U4)]
-        [PreserveSig]
-        int ShowMessage(IntPtr hwnd,
-            [MarshalAs(UnmanagedType.LPWStr)] string lpstrText,
-            [MarshalAs(UnmanagedType.LPWStr)] string lpstrCaption,
-            int dwType,
-            [MarshalAs(UnmanagedType.LPWStr)] string lpstrHelpFile,
-            int dwHelpContext,
-            out int lpResult
-        );
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ShowHelp
+        /// Ascend
         ///
         /// <summary>
-        /// ヘルプを表示します。
+        /// Sorts the specified SelectedIndexCollection object in ascending
+        /// order.
         /// </summary>
         ///
+        /// <param name="src">Source collection.</param>
+        ///
         /* ----------------------------------------------------------------- */
-        [return: MarshalAs(UnmanagedType.U4)]
-        [PreserveSig]
-        int ShowHelp(
-            IntPtr hwnd,
-            [MarshalAs(UnmanagedType.LPWStr)] string pszHelpFile,
-            int uCommand,
-            int dwData,
-            IntPtr ptMouse, // POINT
-            [MarshalAs(UnmanagedType.IDispatch)] object pDispatchObjectHit
-        );
+        public static IEnumerable<int> Ascend(this ListView.SelectedIndexCollection src) =>
+            src.Cast<int>().OrderBy(i => i);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Descend
+        ///
+        /// <summary>
+        /// Sorts the specified SelectedIndexCollection object in
+        /// descending order.
+        /// </summary>
+        ///
+        /// <param name="src">Source collection.</param>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static IEnumerable<int> Descend(ListView.SelectedIndexCollection src) =>
+            src.Cast<int>().OrderByDescending(i => i);
+
+        #endregion
     }
 }

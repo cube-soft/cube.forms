@@ -15,59 +15,64 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Windows.Forms;
+using System.Drawing;
 
-namespace Cube.Forms.Behaviors
+namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ClickBehavior
+    /// FontFactory
     ///
     /// <summary>
-    /// Represents the behavior that a Control object is clicked.
+    /// Provides functionality to create a default Font object.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public class ClickBehavior : DisposableProxy
+    internal static class FontFactory
     {
-        /* ----------------------------------------------------------------- */
-        ///
-        /// ClickBehavior
-        ///
-        /// <summary>
-        /// Initializes a new instance of the ClickBehavior class
-        /// with the specified arguments.
-        /// </summary>
-        ///
-        /// <param name="src">Source view.</param>
-        /// <param name="action">Action to click.</param>
-        ///
-        /* ----------------------------------------------------------------- */
-        public ClickBehavior(Control src, Action action) : base(() =>
-        {
-            void invoke(object s, EventArgs e) => action();
-            src.Click += invoke;
-            return Disposable.Create(() => src.Click -= invoke);
-        }) { }
+        #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// ClickBehavior
+        /// Create
         ///
         /// <summary>
-        /// Initializes a new instance of the ClickBehavior class
-        /// with the specified arguments.
+        /// Creates a new instance of the Font class with the specified
+        /// arguments.
         /// </summary>
         ///
-        /// <param name="src">Source view.</param>
-        /// <param name="action">Action to click.</param>
+        /// <param name="hint">Hint object.</param>
+        ///
+        /// <returns>Font object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public ClickBehavior(ToolStripItem src, Action action) : base(() => {
-            void invoke(object s, EventArgs e) => action();
-            src.Click += invoke;
-            return Disposable.Create(() => src.Click -= invoke);
-        }) { }
+        public static Font Create(Font hint) => Create(hint.Size, hint.Style, hint.Unit);
+
+        /* ----------------------------------------------------------------- */
+        ///
+        /// Create
+        ///
+        /// <summary>
+        /// Creates a new instance of the Font class with the specified
+        /// arguments.
+        /// </summary>
+        ///
+        /// <param name="size">Font size.</param>
+        /// <param name="style">Font style.</param>
+        /// <param name="unit">Font size unit.</param>
+        ///
+        /// <returns>Font object.</returns>
+        ///
+        /* ----------------------------------------------------------------- */
+        public static Font Create(float size, FontStyle style, GraphicsUnit unit)
+        {
+            var f0 = "Meiryo UI";
+            var f1 = SystemFonts.DefaultFont.FontFamily.Name;
+
+            var dest = new Font(f0, size, style, unit);
+            return dest.Name == f0 ? dest : new(f1, size, style, unit);
+        }
+
+        #endregion
     }
 }
