@@ -39,8 +39,8 @@ namespace Cube.Forms
         /// TaskbarProgress
         ///
         /// <summary>
-        /// Initialies a new instance of the TaskbarProgress class with the
-        /// specified window object.
+        /// Initializes a new instance of the TaskbarProgress class with
+        /// the specified window object.
         /// </summary>
         ///
         /// <param name="window">Window object.</param>
@@ -53,8 +53,8 @@ namespace Cube.Forms
         /// TaskbarProgress
         ///
         /// <summary>
-        /// Initialies a new instance of the TaskbarProgress class with the
-        /// specified handle.
+        /// Initializes a new instance of the TaskbarProgress class with
+        /// the specified handle.
         /// </summary>
         ///
         /// <param name="handle">Window handle.</param>
@@ -140,7 +140,7 @@ namespace Cube.Forms
                     try { _core = (ITaskbarList3)new TaskbarListInstance(); }
                     catch (Exception err)
                     {
-                        this.LogWarn(err);
+                        GetType().LogWarn(err);
                         IsSupported = false;
                     }
                 }

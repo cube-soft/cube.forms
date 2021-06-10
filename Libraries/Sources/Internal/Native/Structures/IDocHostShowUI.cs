@@ -15,54 +15,66 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Drawing;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Cube.Forms
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// FontFactory
+    /// IDocHostShowUI
     ///
     /// <summary>
-    /// Cube.Forms で使用する既定のフォントオブジェクトを生成するための
-    /// クラスです。
+    /// https://msdn.microsoft.com/en-us/library/aa753269.aspx
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class FontFactory
+    [ComImport,
+     Guid("C4D244B0-D43E-11CF-893B-00AA00BDCE1A"),
+     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IDocHostShowUI
     {
         #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// ShowMessage
         ///
         /// <summary>
-        /// フォントオブジェクトを生成します。
+        /// Called by MSHTML to display a message box.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static Font Create(Font hint) => Create(hint.Size, hint.Style, hint.Unit);
+        [return: MarshalAs(UnmanagedType.U4)]
+        [PreserveSig]
+        int ShowMessage(IntPtr hwnd,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpstrText,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpstrCaption,
+            int dwType,
+            [MarshalAs(UnmanagedType.LPWStr)] string lpstrHelpFile,
+            int dwHelpContext,
+            out int lpResult
+        );
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Create
+        /// ShowHelp
         ///
         /// <summary>
-        /// フォントオブジェクトを生成します。
+        /// Called by MSHTML to display Help.
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static Font Create(float size, FontStyle style, GraphicsUnit unit)
-        {
-            var primary   = "Meiryo UI";
-            var secondary = SystemFonts.DefaultFont.FontFamily.Name;
-
-            var dest = new Font(primary, size, style, unit);
-            return dest.Name == primary ?
-                   dest :
-                   new Font(secondary, size, style, unit);
-        }
+        [return: MarshalAs(UnmanagedType.U4)]
+        [PreserveSig]
+        int ShowHelp(
+            IntPtr hwnd,
+            [MarshalAs(UnmanagedType.LPWStr)] string pszHelpFile,
+            int uCommand,
+            int dwData,
+            IntPtr ptMouse, // POINT
+            [MarshalAs(UnmanagedType.IDispatch)] object pDispatchObjectHit
+        );
 
         #endregion
     }

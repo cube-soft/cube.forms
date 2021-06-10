@@ -15,38 +15,47 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
-namespace Cube.Forms.Gdi32
+namespace Cube.Mixin.Forms.Controls
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// Gdi32.NativeMethods
+    /// ComboBoxExtension
     ///
     /// <summary>
-    /// user32.dll に定義された関数を宣言するためのクラスです。
+    /// Provides the extended methods of the ComboBox class.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    internal static class NativeMethods
+    public static class ComboBoxExtension
     {
+        #region Methods
+
         /* ----------------------------------------------------------------- */
         ///
-        /// CreateRoundRectRgn
+        /// Bind
         ///
         /// <summary>
-        /// https://msdn.microsoft.com/ja-jp/library/windows/desktop/dd183516.aspx
+        /// Binds the specified ComboBox object with the specified data.
         /// </summary>
         ///
+        /// <param name="src">ComboBox object.</param>
+        /// <param name="data">UserData</param>
+        ///
         /* ----------------------------------------------------------------- */
-        [DllImport(LibName)]
-        public static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect,
-            int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
+        public static void Bind<T>(this ComboBox src, IEnumerable<KeyValuePair<string, T>> data)
+        {
+            var selected = src.SelectedValue;
 
-        #region Fields
-        const string LibName = "Gdi32.dll";
+            src.DataSource    = data;
+            src.DisplayMember = "Key";
+            src.ValueMember   = "Value";
+
+            if (selected is T) src.SelectedValue = selected;
+        }
+
         #endregion
-
     }
 }

@@ -15,50 +15,41 @@
 // limitations under the License.
 //
 /* ------------------------------------------------------------------------- */
-using System.Collections.Generic;
-using System.Linq;
+using System;
+using System.Runtime.InteropServices;
 
-namespace Cube.Forms.Controls
+namespace Cube.Forms.Gdi32
 {
     /* --------------------------------------------------------------------- */
     ///
-    /// ListViewExtension
+    /// Gdi32.NativeMethods
     ///
     /// <summary>
-    /// System.Windows.Forms.ListView の拡張用クラスです。
+    /// Provides functions defined in user32.dll.
     /// </summary>
     ///
     /* --------------------------------------------------------------------- */
-    public static class ListViewExtension
+    internal static class NativeMethods
     {
         #region Methods
 
         /* ----------------------------------------------------------------- */
         ///
-        /// Ascend
+        /// CreateRoundRectRgn
         ///
         /// <summary>
-        /// 昇順にソートします。
+        /// https://msdn.microsoft.com/ja-jp/library/windows/desktop/dd183516.aspx
         /// </summary>
         ///
         /* ----------------------------------------------------------------- */
-        public static IEnumerable<int> Ascend(
-            this System.Windows.Forms.ListView.SelectedIndexCollection indices) =>
-            indices.Cast<int>().OrderBy(x => x);
+        [DllImport(LibName)]
+        public static extern IntPtr CreateRoundRectRgn(int nLeftRect, int nTopRect,
+            int nRightRect, int nBottomRect, int nWidthEllipse, int nHeightEllipse);
 
-        /* ----------------------------------------------------------------- */
-        ///
-        /// Descend
-        ///
-        /// <summary>
-        /// 降順にソートします。
-        /// </summary>
-        ///
-        /* ----------------------------------------------------------------- */
-        public static IEnumerable<int> Descend(
-            this System.Windows.Forms.ListView.SelectedIndexCollection indices) =>
-            indices.Cast<int>().OrderByDescending(x => x);
+        #endregion
 
+        #region Fields
+        const string LibName = "Gdi32.dll";
         #endregion
     }
 }
