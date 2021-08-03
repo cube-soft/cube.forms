@@ -17,6 +17,7 @@
 /* ------------------------------------------------------------------------- */
 using System;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Cube.Forms
 {
@@ -47,7 +48,24 @@ namespace Cube.Forms
         /// <returns>Process object.</returns>
         ///
         /* ----------------------------------------------------------------- */
-        public static Process Start(Uri src) => Process.Start(src.ToString());
+        public static Process Start(Uri src)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var cvt = src.ToString().Replace("&", "^&");
+                var psi = new ProcessStartInfo("cmd", $"/c start {cvt}") { CreateNoWindow = true };
+                return Process.Start(psi);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return Process.Start("xdg-open", src.ToString());
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return Process.Start("open", src.ToString());
+            }
+            else throw new NotSupportedException();
+        }
 
         #endregion
     }
